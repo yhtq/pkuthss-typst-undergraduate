@@ -2,4 +2,4 @@
 *.pdf
 !/build/thesis.pdf
 .vscode/
-notes-lib/**
+notes-lib

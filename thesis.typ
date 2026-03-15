@@ -1,6 +1,7 @@
 #import "template.typ": *
 #import "@preview/curryst:0.6.0": rule, prooftree, rule-set
 #import "notes-lib/template.typ": *
+#import "@preview/commute:0.3.0": *
 
 
 #show: doc => UndergraduateThesis(
@@ -79,21 +80,23 @@ This paper offers a template for undergraduate thesis in Peking University.
 // 目录
 #TableOfContent
 
-#let theorem = thmbox("theorem", "Theorem", fill: rgb("#eeffee"))
-#let corollary = thmplain(
+#let theorem = thmbox("theorem", "定理", fill: rgb("#eeffee"))
+#let corollary = thmbox(
   "corollary",
-  "Corollary",
+  "推论",
   base: "theorem",
-  titlefmt: strong
+  titlefmt: strong,
+  fill: rgb("#eeffee")
 )
 #let remark = thmbox(
   "remark",
-  "Remark"
+  "备注"
 )
-#let definition = thmbox("definition", "Definition", fill: rgb("#fffdee"))
+#let definition = thmbox("definition", "定义", fill: rgb("#fffdee"))
 
-#let example = thmplain("example", "Example").with(numbering: none)
-#let proof = thmproof("proof", "Proof")
+#let example = thmplain("example", "例子").with(numbering: none)
+#let proof = thmproof("proof", "证明")
+#let proposition = thmbox("proposition", "命题", fill: rgb("#eeffff"))
 #let centerProofTree(args) = align(center)[#prooftree(args)]
 #let pair(x, y) = $〈#x, #y〉$
 // DOCUMENT START: 更改状态，标记了文档的开始
@@ -136,12 +139,12 @@ This paper offers a template for undergraduate thesis in Peking University.
           )
       - R3a: #centerProofTree(
             rule(
-              $pi_A : A and B -> A$,
+              $pi_1 : A and B -> A$,
             )
           )
       - R3b: #centerProofTree(
             rule(
-              $pi_B : A and B -> B$,
+              $pi_2 : A and B -> B$,
             )
           )
       - R3c: #centerProofTree(
@@ -153,7 +156,7 @@ This paper offers a template for undergraduate thesis in Peking University.
           )
       - R4a: #centerProofTree(
             rule(
-              $epsilon_(A, B): B and (B => A) -> A$
+              $epsilon_(A, B): (B => A) and B -> A$
             )
           )
       - R4b: #centerProofTree(
@@ -175,16 +178,94 @@ This paper offers a template for undergraduate thesis in Peking University.
     #remark[这里我们只陈述了正直觉主义演算的情形。当然，对于其他常见的演绎系统，例如添加 $or, bot$ 的直觉主义演算，添加排中律的经典逻辑演算，这样的演绎定理也成立，并且证明也是类似的。]
   #let cat = $cal(C)$
   == 笛卡尔闭范畴
-    回顾定义 @dd-sys，不难发现它就是一个图构成一个*范畴*的条件。在这种意义下，只要对演绎系统中的证明做一些形式描述#footnote[也就是将演绎过程 $A -> B$ 的所有证明在某种等价关系下收集为一个集合]，一个演绎系统自然就是一个范畴。更进一步，仿照演算系统中 $T, and$ 的定义，我们规定：
+    回顾定义 @dd-sys，不难发现它就是一个图构成一个*范畴*的条件。在这种意义下，只要对演绎系统中的证明做一些形式描述#footnote[也就是将演绎过程 $A -> B$ 的所有证明在某种意义下定义为一个集合]，一个演绎系统自然就是一个范畴。更进一步，仿照演算系统中 $and, ->$ 的定义，我们规定：
     #definition[笛卡尔闭范畴][
       称一个范畴 $cat$ 是一个*笛卡尔闭范畴（Cartesian Closed Category）*，如果它满足以下条件：
       - 具有所有有限直积（继而具有终对象）
       - 任取对象 $B$，函子 $* times B$ 总有右伴随函子，记作 $*^B$，也即：
         $
-        $
+          Hom(A times B, C) eqv Hom(A, C^B)
+        $<dd-ccc>
+        同时，上式对于 $A, B, C$ 都是自然的
     ]
     #example[
-      集合范畴 *Set* 是一个笛卡尔闭范畴
+      - 集合范畴 *Set* 是一个笛卡尔闭范畴，其中 $C^B$ 实际就是 $Hom(B, C)$
+      - 对任何小范畴 #cat，函子范畴 $FunctorCat(cat, SetCat)$ 是笛卡尔闭范畴。其中：
+        $
+          H^G X = Hom(G X, H X)
+        $
+        验证定义即可。特别的，预层范畴 @ai_jabr $cat^(\^)$  是一个笛卡尔闭范畴。
+      - 一个*半格*（Semilattice）是一个范畴。其中，对象是半格中所有元素，$Hom(x, y)$ 是一个单元素集合当且仅当 $x <= y$，否则是空集合。$x times y$ 是 $x$ 和 $y$ 的下确界。如果这个范畴是笛卡尔闭的，则称这个半格是一个*Heyting 半格*，并往往将 $x^y$ 记作 $y => x$。在 Heyting 半格中，$a and b <= c$ 当且仅当 $a <= b => c$。
+    ]
+    这样定义的笛卡尔闭范畴中，记@dd-ccc 中给出的自然同构为 $eta$，将 $A times B$ 解释为 $A and B$，将 $C^B$ 解释为 $B => C$，并且定义：
+    $
+      epsilon &: (B => A) and B -> A = A^B times B -> A\
+      epsilon &:= Inv(eta)(id: A^B -> A^B)
+    $
+    $
+      forall h: C and B -> A, h^*: C -> (B => A) = eta(h)
+    $
+    
+    #proposition[
+      在由笛卡尔闭范畴给出的正直觉主义演算中，有：
+      - E1: $f 1 = 1 f = f, (h g) f = h (g f)$
+      - E2: $forall f: A -> T, f = circle_A$
+      - E3a: $pi_1 inner(f, g) = f$
+      - E3b: $pi_2 inner(f, g) = g$
+      - E3c: $inner(pi_1 h, pi_2 h) = h$
+      - E4a: $epsilon compose inner(duel(h) pi_1, pi_2) = epsilon compose (duel(h) times id) = h$
+      - E4b: $duel(epsilon compose inner(k pi_1, pi_2)) = duel(epsilon compose (k times id)) = k$
+    ]
+    #proof[
+      基本直接验证定义即可。这里只验证比较复杂的 E4a：
+      $
+      epsilon compose inner(duel(h) pi_1, pi_2) = Inv(eta)(id) compose inner(eta(h) pi_1, pi_2)
+      $
+      根据自然性，我们有交换图：
+      #align(center)[#commutative-diagram(
+      node((0, 0), $Hom(A^B, A^B)$, 1),
+      node((0, 1), $Hom(A^B times B, A)$, 2),
+      node((1, 0), $Hom(C, A^B)$, 3),
+      node((1, 1), $Hom(C times B, A)$, 4),
+      arr(1, 2, $Inv(eta)$),
+      arr(1, 3, $Hom(eta(h) , A^B)$),
+      arr(2, 4, $Hom(eta(h) times B, A)$),
+      arr(3, 4, $Inv(eta)$),)]
+      将 $id$ 代入就有：
+      $
+        Hom((eta(h) times id), A)  (Inv(eta) (id)) = Inv(eta)(id) (eta(h) times id)\
+        Inv(eta) (Hom(eta(h) , A^B)) = Inv(eta) ((x |-> x eta(h)) id) = h
+      $
+      因此交换图就给出了需要的等式。
+      
+      #footnote[
+        这里的 $epsilon$ 通常被称为伴随函子的余单位 @ai_jabr，这个等式也是余单位的常见性质
+      ]
+    ]
+    上面的命题也再次解释了演绎系统与范畴之间的关系：*一个范畴就是一个演绎系统加上一些"证明"之间的等式。*
+    #corollary[有等式：
+      $
+        duel(h) compose k = duel(h compose (k times id)) 
+      $
+      它可以视作某种分配关系。
+    ]
+    #proof[
+      $
+        duel(h) compose k  &= duel(epsilon compose (duel(h) k times id)))\
+        &= duel(epsilon compose (duel(h) times id) compose (k times id))\
+        &= duel(h compose (k times id))
+      $
+    ]
+    #remark[
+      在笛卡尔闭范畴中，我们总有：
+      $
+        Hom(A, B) eqv Hom(1, B^A)
+      $
+      这表明，一定程度上可以认为态射集可以类似看作一个对象。但在这里的场景下，它们之间的区别也不能模糊。考虑将之视为推理系统，前者的含义是：
+      #align(center)[从 $A$ 命题演绎得到 $B$ 命题的所有证明]
+      而后者的含义是：
+      #align(center)[从真值命题 $T$ 演绎得到 $A => B$ 命题的所有证明]
+      它们的等价性是通常意义上演绎定理的内容，并不是一个平凡的结果。
     ]
 
 // = 基本功能 <intro>
