@@ -92,7 +92,7 @@ This paper offers a template for undergraduate thesis in Peking University.
   "remark",
   "备注"
 )
-#let definition = thmbox("definition", "定义", fill: rgb("#fffdee"))
+#let definition = thmbox("definition", "定义",breakable: true, fill: rgb("#fffdee"))
 
 #let example = thmplain("example", "例子").with(numbering: none)
 #let proof = thmproof("proof", "证明")
@@ -178,7 +178,7 @@ This paper offers a template for undergraduate thesis in Peking University.
     #remark[这里我们只陈述了正直觉主义演算的情形。当然，对于其他常见的演绎系统，例如添加 $or, bot$ 的直觉主义演算，添加排中律的经典逻辑演算，这样的演绎定理也成立，并且证明也是类似的。]
   #let cat = $cal(C)$
   == 笛卡尔闭范畴
-    回顾定义 @dd-sys，不难发现它就是一个图构成一个*范畴*的条件。在这种意义下，只要对演绎系统中的证明做一些形式描述#footnote[也就是将演绎过程 $A -> B$ 的所有证明在某种意义下定义为一个集合]，一个演绎系统自然就是一个范畴。更进一步，仿照演算系统中 $and, ->$ 的定义，我们规定：
+    回顾@dd-sys，不难发现它就是一个图构成一个*范畴*的条件。在这种意义下，只要对演绎系统中的证明做一些形式描述#footnote[也就是将演绎过程 $A -> B$ 的所有证明在某种意义下定义为一个集合]，一个演绎系统自然就是一个范畴。更进一步，仿照演算系统中 $and, ->$ 的定义，我们规定：
     #definition[笛卡尔闭范畴][
       称一个范畴 $cat$ 是一个*笛卡尔闭范畴（Cartesian Closed Category）*，如果它满足以下条件：
       - 具有所有有限直积（继而具有终对象）
@@ -261,11 +261,285 @@ This paper offers a template for undergraduate thesis in Peking University.
       $
         Hom(A, B) eqv Hom(1, B^A)
       $
-      这表明，一定程度上可以认为态射集可以类似看作一个对象。但在这里的场景下，它们之间的区别也不能模糊。考虑将之视为推理系统，前者的含义是：
+      这表明，一定程度上可以认为态射集本身是一个对象。但在这里的场景下，不能模糊它们之间的差别。考虑将之视为推理系统，前者的含义是：
       #align(center)[从 $A$ 命题演绎得到 $B$ 命题的所有证明]
       而后者的含义是：
       #align(center)[从真值命题 $T$ 演绎得到 $A => B$ 命题的所有证明]
       它们的等价性是通常意义上演绎定理的内容，并不是一个平凡的结果。
+    ]
+  #let Type = $bold("Type")$
+  #let STLC = [简单类型 $lambda$ 演算]
+  == #STLC 
+    #let subst(x, a) = $x arrow.tail a$
+    #STLC （Simple type $lambda$ calculus）@church_formulation_1940 @pierce_types_2002 @curry_combinatory_nodate 是逻辑学和计算机科学中非常重要的研究对象。接下来，我们将简单介绍它的定义。
+    #set enum(numbering: "(a)") 
+    #definition[#STLC ][
+      我们定义一个*#STLC*是一个形式系统，其中包含如下几类对象：
+      + 类型（Type），满足规则：
+        - 包含基本类型 $1, N$
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $1: Type$,
+              )
+            ),
+            prooftree(
+              rule(
+                $N: Type$,
+              )
+            )
+          )
+          ]
+        - 如果 $A, B$ 是类型，则 $A times B, A => B$ 都是类型，分别称为乘积类型和函数类型
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $A: Type$,
+                $B: Type$,
+                $A times B: Type$
+              )
+            ),
+            prooftree(
+              rule(
+                $A: Type$,
+                $B: Type$,
+                $A => B: Type$
+              )
+            )
+          )
+          ]
+        如无特殊说明，我们用 $A, B$ 等大写字母时，它们默认代表一个类型。
+      + 项（Term），使用：
+        $
+          Gamma x_1 : A, x_2 : B, ... tack t : C
+        $
+        表示项 $t$ 在上下文 $Gamma$ 下具有类型 $C$。$Gamma$ 是一些变量及其类型的集合，称为*上下文*。我们总是假设上下文中，相同的变量不能重复出现。我们有以下的项构造规则：
+        - 对于每个类型 $A$，存在可数多的变量#footnote[
+            无歧义时我们直接使用 $x_i$ 表示，若可能有歧义，使用 $x_i : A$ 表示 $A$ 类型的变量
+          ]
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $A: Type$,
+                $tack x_i : A$
+              )
+            )
+          )
+          ]
+        - 单位类型包含单位项
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $1: Type$,
+                $tack * : 1$
+              )
+            )
+          )
+          ]
+        - 乘积类型包含投影项和配对项
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $tack x : A times B$,
+                $tack pi_1 x : A$
+              )
+            ),
+            prooftree(
+              rule(
+                $tack x : A times B$,
+                $tack pi_2 x : B$
+              )
+            ),
+            prooftree(
+              rule(
+                $tack x : A$,
+                $tack y : B$,
+                $tack pair(x, y) : A times B$
+              )
+            )
+          )
+          ]
+        - 函数类型满足应用规则#footnote[
+            在对符号清晰性没有影响时，也使用 $sep(f, x)$ 表示函数应用
+          ]：
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $tack f : A => B$,
+                $tack x : A$,
+                $tack epsilon(f, x) : B$
+              )
+            )
+          )
+          ]
+        - 抽象规则：
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $tack x : A$,
+                $x : A tack t : B$,
+                $x : A tack lambda x. space t : A => B$
+              )
+            )
+          )
+          ]
+        - 自然数的皮亚诺公理：
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $N: Type$,
+                $tack 0 : N$
+              )
+            ),
+            prooftree(
+              rule(
+                $N: Type$,
+                $tack n : N$,
+                $tack S(n) : N$
+              )
+            )
+          )
+          ]
+        - 函数迭代规则：
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $tack f : A -> A$,
+                $tack a : A$,
+                $tack n : N$,
+                $tack I(f, a, n) : A$
+              )
+            )
+          )
+          ]
+      + 等价性规则#footnote[在更关心计算性时，这些规则最好看作有向的化简关系，可以参考 @thompson_type_1991 @pierce_types_2002]。我们用：
+          $
+            a =^Gamma b 
+          $
+          或者
+          $
+            Gamma tack a = b
+          $
+          表示在上下文 $Gamma$ 下，项 $a$ 和 $b$ 是相等的。其中，我们要求在 $Gamma$ 下 $a, b$ 有相同的类型。等价性规则满足自反型，对称性和传递性，并且对上下文是单调的，也即：
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $Gamma_1 subset Gamma_2$,
+                $Gamma_1 tack a = b$,
+                $Gamma_2 tack a = b$
+              )
+            )
+          )]
+          我们要求以下符合直觉的等价规则：
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $Gamma tack a = b$,
+                $Gamma tack sep(f, a) = sep(f, b)$
+              )
+            ),
+            prooftree(
+              rule(
+                $Gamma union {x : A} tack a = b$,
+                $Gamma tack lambda x:A . space a = lambda x:A . space b$
+              )
+            ),
+            prooftree(
+              rule(
+                $Gamma tack a : 1$,
+                $Gamma tack a = *$
+              ),
+            ),
+            prooftree(
+              rule(
+                $Gamma tack a : A, b : B$,
+                $Gamma tack pi_1 (pair(a, b)) = a$
+              ),
+            ),
+            prooftree(
+              rule(
+                $Gamma tack a : A, b : B$,
+                $Gamma tack pi_2 (pair(a, b)) = b$
+              )
+            ),
+            prooftree(
+              rule(
+                $Gamma tack c : A times B$,
+                $Gamma tack pair(pi_1 (pair(a, b)), pi_2 (pair(a, b))) = pair(a, b)$
+              )
+            ),
+            prooftree(
+              rule(
+                $Gamma union {x : A} tack t : B$,
+                [$t$ 中不包含 $a$ 的自由出现],
+                $Gamma tack (lambda x:A. t) a = t[subst(x, a)]$
+              )
+            ),
+            prooftree(
+              rule(
+                $Gamma tack f : A => B$,
+                $Gamma tack.not x$,
+                $Gamma tack lambda x:A. sep(f, x) = f]$
+              )
+            ),
+            prooftree(
+              rule(
+                $Gamma tack a : A$,
+                $Gamma tack I(f, a, 0) = a$
+              )
+            ),
+            prooftree(
+              rule(
+                $Gamma tack a : A$,
+                $Gamma tack n : N$,
+                $Gamma tack f : A -> A$,
+                $Gamma tack I(f, a, S(n)) = sep(f, I(f, a, n))$
+              )
+            ),
+            prooftree(
+              rule(
+                [$t(x)$ 中不包含 $x$ 的自由出现，且 $x$ 可被 $x'$ 替换],
+                $Gamma tack lambda (x : A). t(x) = lambda (x' : A). t(x')$
+              )
+            ),
+          )]
+    ]<lambda-calculus>
+    上面的等价性规则说明，我们总是可以自由的扩大上下文。而之后的命题表明，如果变量没有自由出现，我们将这个变量删去以缩小上下文。
+    #proposition[
+      我们可以使用如下的规则化简上下文：
+      #centerProofTree(rule(
+        $Gamma union {x : A} tack a(x) = b(x)$,
+        $Gamma tack y : A$,
+        $Gamma tack a(y) = b(y)$
+      ))
+    ]
+    #proof[
+      #TODO
+    ]
+    #corollary[
+      #centerProofTree(rule(
+        $Gamma union {x : A} tack a = b$,
+        [$a, b$ 中不含 $x$ 的自由出现],
+        $Gamma tack a = b$
+      ))
+    ]
+    #definition[#(STLC)之间的态射][
+      设 $scrL, scrL'$ 是两个#(STLC)，称 $F : scrL -> scrL'$ 是它们之间的态射，如果：
+      - $F$ 将 $scrL$ 中的类型映射到 $scrL'$ 中的类型，$scrL$ 中的项映射到 $scrL'$ 中的项，并且保持项的类型。
+      - $F$ 将基本变元 $x_i$ 映到基本变元，并且保持闭项。
+      - $F$ 保持单位类型，乘积类型，函数类型的结构
+      - $F$ 保持等价关系
+    ]
+    #let lamCalc = $lambda-bold("Calc")$
+    #definition[#(STLC)构成的范畴][
+      称 #lamCalc 为#(STLC)构成的范畴，其中对象是所有的#(STLC)，态射是它们之间的态射。
+    ]
+    @lambda-calculus 给出的是#(STLC)的基本性质。也就是说，形式系统中可能包含没有出现在规则中，或者并非按照规则被构造的常量项，类型等等。这与逻辑学和计算机科学中的其他相关材料  @pierce_types_2002 @thompson_type_1991 @church_formulation_1940 的习惯，也即将其定义为由某些推导规则自由生成的形式系统并不一致。然而，此种意义下的#(STLC)只不过特指本文定义下的始对象而已。
+    #proposition[
+      #lamCalc 中存在始对象
+    ]
+    #proof[
+      很容易证明，所有项，类型，等价关系都按照@lambda-calculus 自由生成，不含其他元素的#(STLC)就构成了一个始对象。 
     ]
 
 // = 基本功能 <intro>
