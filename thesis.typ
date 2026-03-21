@@ -51,29 +51,21 @@
 
 // 中文摘要
 #ChineseAbstract(
-  keywords : ("Typst", "排版")
+  keywords : ("Type Theory", "Category Theory", "Formal Logic", "Programming Language")
 )[
 
 类型理论是形式逻辑的延伸，其中的逻辑符号各自具备不同的类型，类型之间也满足一定的规则。历史上，逻辑学家提出了类型理论，并试图将其作为数学的基础。之后，人们逐渐发现建立在类型系统上的逻辑总是与某些范畴之间存在着深刻的联系。计算机诞生并发展之后，类型理论以及其与范畴之间的联系也被计算机科学家们所关注，并且对程序语言理论的发展产生了重要的影响。
 
-本文是《Introduction to Higher Order Categorical Logic》@lambek_introduction_1986 一书的读书报告。该书旨在统一基于类型论的逻辑与范畴，具体而完整的介绍了其中几个经典的对应关系：Typed Lambda Calculus 与 Cartesian Closed Category，Untyped Lambda Calculus 与 C-monoid，Intuitionistic Logic 与 Toposes. 本文也将采用此脉络，详细介绍这些重要的对应关系。
+本文是《Introduction to Higher Order Categorical Logic》@lambek_introduction_1986 一书的读书报告，目标是统一基于类型论的逻辑与范畴，具体介绍其中几个经典的对应关系：简单类型 Lambda 演算与笛卡尔闭范畴，topoes 与直觉主义类型系统。
   
 ]
 
 // English Abstract
 #EnglishAbstract(
-  keywords : ("Typst", "Formatting")
+  keywords : ("Type Theory", "Category Theory", "Formal Logic", "Programming Language")
 )[ 
 
-Typst is an emerging typesetting tool designed to offer simple, efficient, and powerful typesetting capabilities. It combines the strengths of traditional typesetting systems while simplifying user operations, allowing users to focus more on content creation rather than typesetting details.
-
-The core advantage of Typst lies in its intuitive syntax and powerful typesetting engine. Users can define document structures, styles, and content using a programming-like approach, making the typesetting of complex documents more straightforward. Additionally, Typst supports real-time preview functionality, enabling users to see the typesetting effects immediately during the editing process, thereby improving work efficiency.
-
-Typst also boasts high extensibility and flexibility. Through a system of plugins and templates, users can customize typesetting rules to meet various needs. Whether it’s academic papers, business reports, or personal projects, Typst can deliver professional-grade typesetting results.
-
-In summary, Typst is a user-friendly yet professional typesetting tool suitable for a wide range of document creation needs. Its introduction provides users with a new typesetting experience, making the typesetting process more enjoyable and efficient.
-
-This paper offers a template for undergraduate thesis in Peking University.
+#lorem(230)
 ]
 
 
@@ -81,6 +73,7 @@ This paper offers a template for undergraduate thesis in Peking University.
 #TableOfContent
 
 #let theorem = thmbox("theorem", "定理", fill: rgb("#eeffee"))
+#let lemma = thmbox("lemma", "引理", titlefmt: strong, fill: rgb("#eeffee"))
 #let corollary = thmbox(
   "corollary",
   "推论",
@@ -612,7 +605,108 @@ This paper offers a template for undergraduate thesis in Peking University.
       $
       不难看出，$I(f, a)$ 就是唯一的满足定义中图表交换的态射。
     ]
-    在本文的范围内，@def-nat 中的唯一性略显多余。因此，我们称 $N$ 是*弱自然数对象*，如果存在（但未必唯一）满足@def-nat 中图表的 $I(f, a)$。
+    #lemma[
+      设 $N$ 是自然数对象，$f : N -> N$ 满足：
+      $
+        f compose S = S compose f and f compose 0 = 0
+      $
+      则 $f = id$
+    ]<nat-id-lemma>
+    #proof[
+      在泛性质中：
+            #align(center)[#commutative-diagram(
+      node((0, 0), $1$, 1),
+      node((0, 1), $N$, 2),
+      node((0, 2), $N$, 3),
+      node((1, 0), $1$, 4),
+      node((1, 1), $N$, 5),
+      node((1, 2), $N$, 6),
+      arr(1, 2, $0$),
+      arr(2, 3, $S$),
+      arr(4, 5, $0$),
+      arr(5, 6, $S$),
+      arr(1, 4, $$, bij_str),
+      arr(2, 5, $exists! i$),
+      arr(3, 6, $exists! i$),)]
+      显然 $i = id$ 和 $i = f$ 都满足交换图，因此由唯一性可得 $f = id$
+    ]
+    #proposition[
+      设 $N$ 是自然数对象，则有：
+      $
+        N eqv 1 + N
+      $
+    ]<nat-coproduct>
+    #proof[
+      我们验证 $N$ 满足 $1 + N$ 的泛性质，也即对于任何 $A$ 若有图表：
+      #align(center)[#commutative-diagram(
+      node((0, 0), $N$, 1),
+      node((0, 1), $1$, 2),
+      node((1, 0), $N$, 3),
+      node((1, 1), $A$, 4),
+      arr(2, 1, $0$),
+      arr(3, 1, $S$),
+      arr(2, 4, $a$),
+      arr(3, 4, $f$),)]
+      我们应用如下的自然数对象的泛性质：
+            #align(center)[#commutative-diagram(
+      node((0, 0), $1$, 1),
+      node((0, 1), $N$, 2),
+      node((0, 2), $N$, 3),
+      node((1, 0), $1$, 4),
+      node((1, 1), $N times A$, 5),
+      node((1, 2), $N times A$, 6),
+      arr(1, 2, $0$),
+      arr(2, 3, $S$),
+      arr(4, 5, $inner(0, a)$),
+      arr(5, 6, $inner(S pi_1, f pi_1)$),
+      arr(1, 4, $$, bij_str),
+      arr(2, 5, $exists! i$),
+      arr(3, 6, $exists! i$),)]
+      断言以下图表交换：
+      #align(center)[#commutative-diagram(
+      node((0, 0), $N$, 1),
+      node((0, 1), $1$, 2),
+      node((1, 0), $N$, 3),
+      node((1, 1), $A$, 4),
+      arr(2, 1, $0$),
+      arr(3, 1, $S$),
+      arr(2, 4, $a$),
+      arr(3, 4, $f$),
+      arr(1, 4, $pi_2 compose i$)
+      )]
+      这是因为：
+      $
+        pi_2 compose i compose 0 = pi_2 compose inner(0, a) = a\
+        pi_2 compose i compose S = pi_2 compose inner(S pi_1, f pi_1) compose i = f compose pi_1 compose i
+      $
+      同时：
+      $
+        pi_1 compose i compose S = pi_1 compose inner(S pi_1, f pi_1) compose i = S compose pi_1 compose i\
+        pi_i compose i compose 0 = pi_1 compose inner(0, a) = 0
+      $
+      根据@nat-id-lemma 可得 $pi_1 compose i = id$，因此就得到：
+      $
+        pi_2 compose i compose S = f
+      $
+      这就表明上图交换。至于唯一性，设 $j : N -> A$ 也满足上面的余积交换图，返回验证：
+      $
+        inner(id, j) : N -> N times A
+      $
+      可以在自然数交换图中替代 $i$ 的位置即可。具体来说：
+      $
+        inner(id, j) compose 0 = inner(0, j compose 0) = inner(0, a)\
+        inner(id, j) compose S = inner(S, j compose S) = inner(S, f) = inner(S pi_1, f pi_1) compose inner(id, j)
+      $
+      再由 $i$ 的唯一性，立得：
+      $
+        inner(id, j) = i\
+        j = pi_2 compose inner(id, j) = pi_2 compose i
+      $
+      证毕。
+    ]
+    @nat-coproduct 也可以被解释为某种*递归原理*：对于任何类型 $A$，想要定义一个 $N -> A$ 的态射 $f$，只需要一个 $1 -> A$ 的态射作为递归起点，以及另一个 描述 $f compose S$ 的态射 $N -> A$，如此一来，$f$ 就被余积的性质唯一决定了。
+
+    在本文的范围内，有时@def-nat 中的唯一性略显多余。因此，我们称 $N$ 是*弱自然数对象*，如果存在（但未必唯一）满足@def-nat 中图表的 $I(f, a)$。
 
     #let CartN = $bold("Cart")_N$
     #definition[
@@ -780,7 +874,282 @@ This paper offers a template for undergraduate thesis in Peking University.
     #proof[
       也就是要验证 $cat(*) scrL(*) eqv id$ 和 $scrL(*) cat(*) eqv id$ #TODO
     ]
-  
+    需要说明的是，本章内容大体上以@def-pic 为模板引入连接词和推导规则。以此为基础，我们可以进行许多并不困难的拓展，例如：
+    - 在类型系统中引入和类型，在笛卡尔闭范畴中引入余积#footnote[这样的范畴有时也称作*双笛卡尔闭范畴*，（bicartesian closed category）]。它们都对应着（直觉主义的）命题逻辑中的析取操作。
+    - 在类型系统中引入空类型，在笛卡尔闭范畴中引入始对象。它们都对应着命题逻辑中的假值。在假值 $F$ 的基础上，$A$ 的否定就可以定义为 $A => F$。
+    - 在以上拓展的基础上，如果进一步引入规则：
+      $
+        tack "exclude_middle" : A or not A
+      $
+      也就是说 $A or not A$ 这个命题总为真，就相当于从直觉主义逻辑回到了经典逻辑。
+    基于以上的拓展（或者其中的一部分），我们也可以得到类似的同构结论。这也说明，我们建立的理论是足够普遍的。
+= Topos 与直觉主义类型系统
+    在@lambda-calculus 中，我们大体上处理了与逻辑学中的*命题逻辑*对应的部分。很自然的，我们希望仿照这样的方式处理带量词的逻辑系统。在看似与此无关的一侧，Lawvere @38b76542-b771-32c2-a3ea-ba3f392713d3 首先意识到范畴论也可以起到类似集合论的作用，成为其他数学理论的逻辑基础。这个想法迅速的被发展为所谓的 *Grothendieck topos*。令人惊讶的是，这样的 topos 恰好与带量词的直觉主义类型系统之间存在着对应关系。
+  == 直觉主义类型系统
+    首先，我们建立所谓*直觉主义类型系统*。#footnote[需要注明的是，现代文献中的“直觉主义类型系统”通常是指 Martin-Löf 的依赖类型理论 @Martin-Lof1980-MARITT-18，它是一些现代常用的定理证明器，如 Rocq@Rocq , Lean@Lean 的理论基础。而这里所说的类型系统相较而言更为简化，主要设计目的是与 topos 理论之间建立对应。由于笔者并未找到这样的类型系统的标准称谓，故这里姑且仍然遵循原书称其为“直觉主义类型系统”。]
+    #definition[直觉主义类型系统][
+      我们称一个*直觉主义类型系统（Intuitionistic Type System）*为满足以下条件的类型系统：
+      - 类型的构造规则包括：
+        - 单位类型
+          #centerProofTree(
+            rule(
+              $1 : Type$
+            )
+          )
+        - 自然数类型
+          #centerProofTree(
+            rule(
+              $N : Type$
+            )
+          )
+        - 乘积类型
+          #centerProofTree(
+            rule(
+              $A : Type$,
+              $B : Type$,
+              $A times B : Type$
+            )
+          )
+        - 命题类型
+          #centerProofTree(
+            rule(
+              $Omega : Type$
+            )
+          )
+        - 幂集类型
+          #centerProofTree(
+            rule(
+              $A : Type$,
+              $P(A) : Type$
+            )
+          )
+      - 项的构造规则包括：
+        - 对于每个类型 $A$，存在可数多的变量 $x_i^A$
+        - 单位类型包含单位项
+          #centerProofTree(
+            rule(
+              $* : 1$
+            )
+          )
+        - 乘积类型包含配对项
+          #centerProofTree(
+            rule(
+              $tack a : A$,
+              $tack b : B$,
+              $tack pair(a, b) : A times B$
+            )
+          )
+        - 幂集类型包含元素关系项
+          #centerProofTree(
+            rule(
+              $tack a : A$,
+              $tack b : P(A)$,
+              $a in b : Omega$
+            )
+          )
+        - 幂集类型的分类规则
+          #centerProofTree(
+            rule(
+              $x : A tack p(x) : Omega$,
+              $tack {x: A | p(x)} : P(A)$
+            )
+          )
+          有时，当类型没有歧义时，我们也采用下面的记号：
+          $
+            p(-) := {x : A | p(x)}
+          $
+        - 自然数的皮亚诺规则
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $tack 0 : N$,
+              )
+            ),
+            prooftree(
+              rule(
+                $tack n : N$,
+                $tack S(n) : N$
+              )
+            )
+              )
+          ]
+        - 命题类型的逻辑规则：
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $tack a : A$,
+                $tack a' : A$,
+                $tack a = a' : Omega$
+              )
+            )
+            // prooftree(
+            //   rule(
+            //     $tack top : Omega$,
+            //   )
+            // ),
+            // prooftree(
+            //   rule(
+            //     $tack bot : Omega$,
+            //   )
+            // ),
+            // prooftree(
+            //   rule(
+            //     $tack p : Omega$,
+            //     $tack q : Omega$,
+            //     $tack p and q : Omega$
+            //   )
+            // ),
+            // prooftree(
+            //   rule(
+            //     $tack p : Omega$,
+            //     $tack q : Omega$,
+            //     $tack p or q : Omega$
+            //   )
+            // ),
+            // prooftree(
+            //   rule(
+            //     $tack p : Omega$,
+            //     $tack q : Omega$,
+            //     $tack p => q : Omega$
+            //   )
+            // ),
+            // prooftree(
+            //   rule(
+            //     $x : A tack p(x) : Omega$,
+            //     $tack forall x. p(x) : Omega$
+            //   )
+            // ),
+            // prooftree(
+            //   rule(
+            //     $x : A tack p(x) : Omega$,
+            //     $tack exists x. p(x) : Omega$
+            //   )
+            // )
+          )
+          ]
+    ]<def-intu-type-sys>
+    除了 $P, Omega$ 外，其余的构造规则应当都是熟悉的。事实上，$P, Omega$ 共同构成了一个*高阶逻辑*（higher-order logic）的基础。我们可以使用它们来定义其他的逻辑符号，包括：
+    $
+      top &:= * = *\
+      p and q &= pair(p, q) = pair(top, top)\
+      p => q &= p and q = p\
+      forall x. p(x) &= {x : A | p(x)} = {x : A | top}\
+      bot &:= forall t: Omega. Omega\
+      p or q &:= forall t: Omega. ((p => t) and (q => t) => t)\
+      exists x. p(x) &:= forall t: Omega. ((forall x. p(x) => t) => t)\
+    $
+    此外，我们也会使用其他常用的逻辑符号：
+    $
+      not p   &:= p => bot \
+      p <=> q &:= (p => q) and (q => p) \
+      a = a' &:= forall u: P A. (a in u <=> a' in u)\
+      {a} &:= {x : A | x = a}\
+      exists! x. p(x) &:= exists x'. p(-) = {x'}\
+      alpha subset beta &:= forall x: A. (x in alpha => x in beta)
+    $
+    #definition[续@def-intu-type-sys][
+      我们要求一个直觉主义类型系统中有如下推理规则：
+      #TODO
+    ]
+  == Topos
+    #let char(x) = $"char"(#x)$
+    #definition[子对象分类器（Subobject classifier）][
+      设 $cat$ 是一个范畴，称对象 $Omega$ 是一个*子对象分类器*，如果
+      - 存在态射 $top: 1 -> Omega$
+      - 对于所有 $h: A -> Omega$，等化子 $ker(h, top compose circle)$ 存在，也记为 $ker h$
+      - 对于所有单态射 $m : B -> A$，存在唯一态射 $char(m) : A -> Omega$ 使得 $B = ker char(m)$ 且 $m$ 就是核态射。
+    ]
+    #proposition[
+      图表：
+      #align(center)[#commutative-diagram(
+      node((0, 0), $B$, 1),
+      node((0, 1), $1$, 2),
+      node((1, 0), $A$, 3),
+      node((1, 1), $Omega$, 4),
+      arr(1, 2, $circle$),
+      arr(1, 3, $m$, inj_str),
+      arr(2, 4, $top$),
+      arr(3, 4, $h = char(m)$),)]
+      是一个拉回图表。
+    ]<topos-pullback>
+    #proof[
+      假设
+      #align(center)[#commutative-diagram(
+      node((0, 0), $B$, 1),
+      node((0, 1), $1$, 2),
+      node((1, 0), $A$, 3),
+      node((1, 1), $Omega$, 4),
+      node((1, -1), $B'$, 5),
+      arr(1, 2, $circle$),
+      arr(1, 3, $m$, inj_str),
+      arr(2, 4, $top$),
+      arr(3, 4, $h = char(m)$),
+      arr(5, 3, $$),
+      arr(5, 2, $$)
+      )]
+      为了运用等化子的性质，验证：
+      $
+        top compose circle_A compose (B' -> A) = top compose circle_B' = B' -> Omega = h compose (B' -> A)
+      $
+      显然，等化子的泛性质就说明上面的图表是拉回图表。
+    ]
+    #proposition[
+      等价的，子对象分类器可以定义为对象 $Omega$ 使得：
+      $
+        "Sub" eqv Hom(-, Omega)
+      $
+    ]
+    #proof[
+      #TODO
+    ]
+    #definition[Topos][
+      称一个范畴 $cat$ 是一个（基本/Elementary）*Topos*，如果它是一个含有子对象分类器和自然数对象的笛卡尔闭范畴。
+    ]
+    #proposition[
+      记 $d : B -> B times B := pair(id, id)$ 是对角态射，则对任何 $f, g : A -> B$ 有：
+      $
+        f = g <=> char(d) compose pair(f, g) = top compose circle
+      $
+    ]
+    #proof[
+      若 $f = g$ 显有 $char(d) compose pair(f, f) = char(d) compose d compose f = top compose circle compose f = top compose circle$
+
+      对于另一个方向，假设 $pair(f, g) = top compose circle$，则有下面的图表：
+      #align(center)[#commutative-diagram(
+      node((0, 0), $B$, 1),
+      node((0, 1), $1$, 2),
+      node((1, 0), $B times B$, 3),
+      node((1, 1), $Omega$, 4),
+      node((1, -1), $B$, 5),
+      arr(1, 2, $circle$),
+      arr(1, 3, $d$),
+      arr(2, 4, $top$),
+      arr(3, 4, $char(d)$),
+      arr(5, 3, $inner(f, g)$),
+      arr(5, 2, $circle$)
+      )]
+      同时，@topos-pullback 给出右半部分是一个拉回图表，继而：
+            #align(center)[#commutative-diagram(
+      node((0, 0), $B$, 1),
+      node((0, 1), $1$, 2),
+      node((1, 0), $B times B$, 3),
+      node((1, 1), $Omega$, 4),
+      node((1, -1), $B$, 5),
+      arr(1, 2, $circle$),
+      arr(1, 3, $d$),
+      arr(2, 4, $top$),
+      arr(3, 4, $char(d)$),
+      arr(5, 3, $inner(f, g)$),
+      arr(5, 2, $circle$),
+      arr(5, 1, $exists! h$,dashed_str)
+      )]
+      这表明：
+      $
+        inner(f, g) = inner(id, id) compose h = inner(h, h)
+      $
+      继而 $f = h = g$，证毕。
+    ]
+
 
 // = 基本功能 <intro>
 
