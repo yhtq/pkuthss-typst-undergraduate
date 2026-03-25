@@ -96,15 +96,14 @@
 #doc_start()
 
 = 导言
-  *类型（Type*）的概念最早由 Russell @Whitehead1910-WHIPM-8 引入，以解决当时人们所面临的朴素集合论的悖论。之后，类型理论被发展成为一个重要的研究对象，并随着计算机科学的发展，成为了程序语言理论的核心工具之一 @pierce_types_2002 。粗略地说，一个类型系统中包含着一些类型和项，在一定上下文下，一个结构良好的项应该具有唯一的类型。同时，系统中有着一些规则，规定了类型和项的可能构造方式，以及判定项的类型的方法。
+  *类型（Type*）的概念最早由 Russell 和 Whitehead @Whitehead1910-WHIPM-8 引入，以解决当时人们所面临的朴素集合论的悖论。之后，类型理论被发展成为一个重要的研究对象，并随着计算机科学的发展，成为了程序语言理论的核心工具之一 @pierce_types_2002 。粗略地说，一个类型系统中包含着一些类型和项，在一定上下文下，一个结构良好的项应该具有唯一的类型。同时，系统中有着一些规则，规定了类型和项的可能构造方式，以及判定项的类型的方法。
 
   *范畴（Category*）是近现代数学中非常重要的工具之一。最早，它作为描述数学中广泛存在自然关系的工具被引入@eilenberg_general_1945 ，后来被广泛应用于数学的各个分支。它的核心思想是将数学对象抽象为一些对象（Object）和态射（Morphism），并且规定了态射之间的复合关系。
 
-  尽管两个领域的起源完全不同，但随着人们研究的深入，它们之间的关系也逐渐被发现。Lawvere 为了使用范畴语言描述逻辑中常见的替换（Substitution）操作，引入了笛卡尔闭范畴（Cartesian Closed Category）的概念 @38b76542-b771-32c2-a3ea-ba3f392713d3。由于形式上的相似性，它与简单类型 Lambda 演算@church_formulation_1940 之间的等价关系迅速被发现。逻辑学家为了增强类型的表达能力，逐渐发展出了更强的类型系统，例如 Martin-Löf 类型理论。独立地，局部笛卡尔闭范畴（Locally Cartesian Closed Category）被范畴学家提出，之后，它被发现与 Martin-Löf 类型理论之间存在着深刻的联系 @seely_locally_1984。之后，随着研究的深入，更多的类型系统与范畴之间的联系也被发现。
-
+  尽管两个领域的起源完全不同，但随着人们研究的深入，它们之间的关系也逐渐被发现。Lawvere 首先尝试使用范畴论作为数学的逻辑基础，并为了使用范畴语言描述逻辑中常见的替换（Substitution）操作，引入了笛卡尔闭范畴（Cartesian Closed Category）的概念 @38b76542-b771-32c2-a3ea-ba3f392713d3。由于形式上的相似性，它与简单类型 Lambda 演算@church_formulation_1940 之间的等价关系迅速被发现。逻辑学家为了增强类型的表达能力，逐渐发展出了更强的类型系统，例如 Martin-Löf 类型理论。独立地，局部笛卡尔闭范畴（Locally Cartesian Closed Category）被范畴学家提出，之后，它被发现与 Martin-Löf 类型理论之间存在着深刻的联系 @seely_locally_1984。Lawvere 与 Tierney 从代数几何的工具中发展出了 topos 的概念以作为集合论的替代@history_of_topos，与其相关联的类型理论 Mitchell–Bénabou 语言也被提出。
   本文大体上按照 《Introduction to Higher Order Categorical Logic》 的脉络，首先介绍一些基础的范畴工具。之后，我们将着重介绍两个重要的对应关系：简单类型 Lambda 演算与笛卡尔闭范畴，topoes 与直觉主义类型系统。主要理论和工具基本与原书一致，但引入顺序和方式可能会做出一些调整，许多记号也被调整为更接近近期文献的习惯。
 
-  原书以及诸多其他文献 @jacobs_categorical_nodate @girard_proofs_1989 @pierce_types_2002 @pierce_types_2002 共同强调了一个重要的观点：*类型系统*，*演绎逻辑*与*范畴*之间存在着高度的一致性。本文也将贯彻这一思想。例如，我们重新引入了演绎系统来作为笛卡尔闭范畴和简单类型 Lambda 演算的模板。为了服从这一目的，我们定义演绎系统时采用的规则、公理和记号等可能并不符合传统的形式逻辑习惯，以便更好地强调它与类型论、范畴之间对应关系。
+  原书以及诸多其他文献 @jacobs_categorical_nodate @girard_proofs_1989 @pierce_types_2002 @pierce_types_2002 共同强调了一个重要的观点：*类型系统*，*演绎逻辑*与*范畴*之间存在着高度的一致性。本文也将贯彻这一思想。例如，我们重新引入了演绎系统来作为笛卡尔闭范畴和简单类型 Lambda 演算的模板。为了服从这一目的，我们定义演绎系统时采用的规则、公理和记号等可能并不符合传统的形式逻辑习惯，以便更好地强调它与类型论、范畴理论之间的对应关系。
 
   
 = 简单类型 Lambda 演算与笛卡尔闭范畴 <lambda-arithmetic>
@@ -180,10 +179,13 @@
         "if" A and B tack C "then" A tack B => C 
     $
     #let scrL = $scr(L)$
-    然而，我们可以从更高的角度考虑这个表述：若记原有的演绎系统为 $scrL$，添加一个额外的*假设* $x: T -> A$ 如同在 $scrL$ 中添加了一个新的箭头，并在对应演绎规则下，自由生成了一个新的演绎系统 $scrL(x)$ #footnote[我们使用了类似多项式的记号，直观上可以认为这里添加一个对象自由生成的行为类似于添加未定元得到的多项式空间，之后我们会详细介绍。]。在这样的想法下，演绎定理可以表述为：
+    然而，我们可以从更高的角度考虑这个表述：若记原有的演绎系统为 $scrL$，添加一个额外的*假设* $x: T -> A$ 如同在 $scrL$ 中添加了一个新的箭头，并在对应演绎规则下，自由生成了一个新的演绎系统 $scrL(x)$ #footnote[我们使用了类似多项式的记号，直观上可以认为这里添加一个对象自由生成的行为类似于添加未定元得到的多项式空间，之后我们会使用范畴的语言详细介绍。]。在这样的想法下，演绎定理可以表述为：
     #theorem[演绎定理][
       在正直觉主义演算 $scrL$ 中，任何 $scrL(x : T -> A)$ 中的箭头 $phi(x) : B -> C$ 总对应一个 $scrL$ 中的箭头 $B and A -> C$
     ]<dd-theorem>
+    #proof[
+      #TODO
+    ]
     #remark[这里我们只陈述了正直觉主义演算的情形。当然，对于其他常见的演绎系统，例如添加 $or, bot$ 的直觉主义演算，添加排中律的经典逻辑演算，这样的演绎定理也成立，并且证明也是类似的。]
   #let cat = $cal(C)$
   == 笛卡尔闭范畴
@@ -386,7 +388,7 @@
           ]
         - 函数类型满足应用规则#footnote[
             在对符号清晰性没有影响时，也使用 $sep(f, x)$ 表示函数应用
-          ]：
+          ]
           #align(center)[#rule-set(
             prooftree(
               rule(
@@ -397,7 +399,7 @@
             )
           )
           ]
-        - 抽象规则：
+        - 抽象规则
           #align(center)[#rule-set(
             prooftree(
               rule(
@@ -408,7 +410,7 @@
             )
           )
           ]
-        - 自然数的皮亚诺公理：
+        - 自然数的皮亚诺公理
           #align(center)[#rule-set(
             prooftree(
               rule(
@@ -423,7 +425,7 @@
             )
           )
           ]
-        - 函数迭代规则：
+        - 函数迭代规则
           #align(center)[#rule-set(
             prooftree(
               rule(
@@ -572,7 +574,7 @@
     ]
     直观上看，@lambda-calculus 中的类型和项的构造规则与@def-ccc 中笛卡尔闭范畴的定义非常相似。其中大部分结构，包括单位类型与终对象，乘积类型与有限直积，都有着很好的对应关系。然而，至此为止，仍有以下问题未被范畴语言解决：
     - 在定义#(STLC)时，我们按照逻辑学的通常习惯，在讨论一个项时，往往要基于某个*上下文*。在使用函数抽象和函数应用时，上下文也会发生变化。然而，一个特定的笛卡尔闭范畴并不能很好的描述上下文的变化。
-    - 在定义#(STLC)时，为了方便起见我们要求了自然数类型的存在。我们还没有在范畴中刻画自然数。
+    - 在定义#(STLC)时，为了方便起见，我们要求了自然数类型的存在。我们还没有在范畴中刻画自然数。
     接下来两节将解决这两个问题。
   == 自然数对象
     在@lambda-calculus 中，我们对自然数类型的要求基本和经典的皮亚诺公理是一致的。在范畴中，我们也可以类似叙述皮亚诺公理：
@@ -717,7 +719,7 @@
     #definition[多项式范畴][
       设 $cat$ 是一个笛卡尔闭范畴，$A, B$ 是其中对象，$x : A -> B$ 是一个未定元。称一个范畴 $cat[x]$ 是 $cat$ 关于 $x$ 的*多项式范畴*，如果它满足以下条件：
       - 存在笛卡尔闭函子 $H : cat -> cat[x]$
-      - 对于任何笛卡尔闭范畴 $cat'$，函子 $F : cat -> cat'$ 和态射 $b : F A -> F B$，存在唯一函子 $F'$ 使得：
+      - 对于任何笛卡尔闭范畴 $cat'$，笛卡尔闭函子 $F : cat -> cat'$ 和态射 $b : F A -> F B$，存在唯一笛卡尔闭函子 $F'$ 使得：
         #align(center)[#commutative-diagram(
         node((0, 0), $cat$, 1),
         node((0, 1), $cat'$, 2),
@@ -725,19 +727,38 @@
         arr(1, 2, $F$),
         arr(3, 2, $exists! F'$, dashed_str),
         arr(1, 3, $H_x$),)]
+        并且 $F' x = b$
     ]
     #proposition[
       对于任何笛卡尔闭范畴 $cat$ 和对象 $A, B$，以及态射 $x : A -> B$，多项式范畴 $cat[x]$ 都存在且唯一。
     ]
     #proof[
-      #TODO
+      大体来说我们使用以下的技术：在范畴 $cat$ 的基础上，我们添加一个新的箭头 $x : A -> B$，并且让它按照笛卡尔闭范畴的规则自由生成。我们忽略一些形式化的细节（#TODO 在附录里补全？）并记这样得到的笛卡尔闭范畴就是 $cat[x]$。事实上，$cat[x]$ 中的对象就是 $cat$ 中的对象，而态射无非由以下几种情况归纳产生：
+      - $cat$ 中的态射 $f$
+      - $x$ 本身
+      - 两个含 $x$ 的态射的复合 $f(x) compose g(x)$
+      - 两个含 $x$ 的态射的乘积 $inner(f(x), g(x))$
+      - 含 $x$ 态射的右伴随 $eta(f(x)) where f: A times B -> C$
+      而 $H_x$ 的定义是平凡的。回到命题本身，我们证明其中的泛性质。递归的，我们定义这样的函子 $F'$:
+      - $F' X = F X$，其中 $X$ 是 $cat, cat[x]$ 中的对象
+      - 在态射上满足以下递归定义：
+        - $F' f = F f$，其中 $f$ 是 $cat$ 中的态射
+        - $F' x = b$
+        - $F'(f(x) compose g(x)) = F' f(x) compose F' g(x)$
+        - $F'(inner(f(x), g(x))) = inner(F' f(x), F' g(x))$
+        - $F'(eta(f(x))) = eta(F' f(x))$
+      不难验证，这样的 $F'$ 当然是满足交换图条件的。至于唯一性，假设 $F''$ 是另一个满足条件的函子，检查上面的定义规则：
+      - $F'' f = F f = F' f$ 是由交换图决定的
+      - $F'' x = b = F' x$ 是由定义要求的
+      - 其余三条都是笛卡尔闭函子必要的
+      这就表明，$F''$ 只能是 $F'$
     ]
     #proposition[
       对于两个未定元 $x_1, x_2$，我们有：
       $
-        cat[x_1][x_2] eqv cat[x_2][x_1]
+        cat[x_1][x_2] eqv cat[x_2][x_1] eqv cat[inner(x_1, x_2)]
       $
-      进而，我们可以忽略其顺序，定义 $cat[x_1, x_2] := cat[x_1][x_2]$
+      进而，我们可以忽略其顺序，定义 $cat[x_1, x_2] := cat[inner(x_1, x_2)]$
     ]
     #proof[
       #TODO
@@ -745,7 +766,7 @@
 
     定义了多项式范畴之后，自然会想到@dd-theorem 能否推广到多项式范畴中。答案是肯定的。
     #theorem[函数完备性][
-      设未定元 $x : 1 -> A$，对于所有多项式 $phi(x) : B -> C$（也即 $cat[X]$ 中的一个态射），存在 $cat$ 中唯一一个态射 $f : A times B -> C$ 使得：
+      设未定元 $x : 1 -> A$，对于所有多项式 $phi(x) : B -> C$（也即 $cat[x]$ 中的一个态射），存在 $cat$ 中唯一一个态射 $f : A times B -> C$ 使得：
       $
         f compose ((x compose circle : A -> A) times B) = phi(x)
       $
@@ -883,12 +904,14 @@
       $
       也就是说 $A or not A$ 这个命题总为真，就相当于从直觉主义逻辑回到了经典逻辑。
     基于以上的拓展（或者其中的一部分），我们也可以得到类似的同构结论。这也说明，我们建立的理论是足够普遍的。
-= Topos 与直觉主义类型系统
-    在@lambda-calculus 中，我们大体上处理了与逻辑学中的*命题逻辑*对应的部分。很自然的，我们希望仿照这样的方式处理带量词的逻辑系统。在看似与此无关的一侧，Lawvere @38b76542-b771-32c2-a3ea-ba3f392713d3 首先意识到范畴论也可以起到类似集合论的作用，成为其他数学理论的逻辑基础。这个想法迅速的被发展为所谓的 *Grothendieck topos*。令人惊讶的是，这样的 topos 恰好与带量词的直觉主义类型系统之间存在着对应关系。
-  == 直觉主义类型系统
-    首先，我们建立所谓*直觉主义类型系统*。#footnote[需要注明的是，现代文献中的“直觉主义类型系统”通常是指 Martin-Löf 的依赖类型理论 @Martin-Lof1980-MARITT-18，它是一些现代常用的定理证明器，如 Rocq@Rocq , Lean@Lean 的理论基础。而这里所说的类型系统相较而言更为简化，主要设计目的是与 topos 理论之间建立对应。由于笔者并未找到这样的类型系统的标准称谓，故这里姑且仍然遵循原书称其为“直觉主义类型系统”。]
-    #definition[直觉主义类型系统][
-      我们称一个*直觉主义类型系统（Intuitionistic Type System）*为满足以下条件的类型系统：
+#let MBL = "Mitchell–Bénabou 语言"
+= Topos 与#MBL
+    在@lambda-calculus 中，我们大体上处理了与逻辑学中的*命题逻辑*对应的部分。很自然的，我们希望仿照这样的方式处理带量词的逻辑系统。在看似与此无关的一侧，Lawvere @38b76542-b771-32c2-a3ea-ba3f392713d3 首先意识到范畴论也可以起到类似集合论的作用，成为其他数学理论的逻辑基础。这个想法迅速的被发展为所谓的 *Grothendieck topos*。在 toposs 中，人们也找到了内部的类型理论，它被称为 #MBL#footnote[在原书中它被称为*直觉主义类型系统*，但现代文献中的“直觉主义类型系统”通常是指 Martin-Löf 的依赖类型理论 @Martin-Lof1980-MARITT-18，它是一些现代常用的定理证明器，如 Rocq@Rocq , Lean@Lean 的理论基础。而这里所说的类型系统相较而言更为简化，主要设计目的是与 topos 理论之间建立对应。这里使用的称呼来自于 @mac_lane_sheaves_1994。]。
+  == #MBL
+    #let ineq = $eq.o$
+    首先，我们建立所谓*#MBL*。
+    #definition[#MBL][
+      我们称一个*#MBL*为满足以下条件的类型系统：
       - 类型的构造规则包括：
         - 单位类型
           #centerProofTree(
@@ -979,7 +1002,7 @@
               rule(
                 $tack a : A$,
                 $tack a' : A$,
-                $tack a = a' : Omega$
+                $tack a ineq a' : Omega$
               )
             )
             // prooftree(
@@ -1028,12 +1051,12 @@
           )
           ]
     ]<def-intu-type-sys>
-    除了 $P, Omega$ 外，其余的构造规则应当都是熟悉的。事实上，$P, Omega$ 共同构成了一个*高阶逻辑*（higher-order logic）的基础。我们可以使用它们来定义其他的逻辑符号，包括：
+    除了 $P, Omega$ 外，其余的构造规则应当都是熟悉的。事实上，$P, Omega$ 共同构成了一个*高阶逻辑*（higher-order logic）的基础。其中，我们用 $ineq$ 表示逻辑内的相等，以免后续与元理论中的相等混淆。我们可以使用它们来定义其他的逻辑符号，包括：
     $
-      top &:= * = *\
-      p and q &= pair(p, q) = pair(top, top)\
-      p => q &= p and q = p\
-      forall x. p(x) &= {x : A | p(x)} = {x : A | top}\
+      top &:= * ineq *\
+      p and q &= pair(p, q) ineq pair(top, top)\
+      p => q &= p and q ineq p\
+      forall x. p(x) &= {x : A | p(x)} ineq {x : A | top}\
       bot &:= forall t: Omega. Omega\
       p or q &:= forall t: Omega. ((p => t) and (q => t) => t)\
       exists x. p(x) &:= forall t: Omega. ((forall x. p(x) => t) => t)\
@@ -1043,14 +1066,22 @@
       not p   &:= p => bot \
       p <=> q &:= (p => q) and (q => p) \
       a = a' &:= forall u: P A. (a in u <=> a' in u)\
-      {a} &:= {x : A | x = a}\
-      exists! x. p(x) &:= exists x'. p(-) = {x'}\
+      {a} &:= {x : A | x ineq a}\
+      exists! x. p(x) &:= exists x'. p(-) ineq {x'}\
       alpha subset beta &:= forall x: A. (x in alpha => x in beta)
     $
+    #let intacke = $attach(tack, br: "in")$
+    #let intack(gamma) = $attach(tack, br: "in", tr: #gamma)$
     #definition[续@def-intu-type-sys][
+      我们用：
+      $
+        Delta intack(Gamma) p
+      $
+      表示上下文 $Gamma$ 下，$Omega$ 内部的逻辑推理关系，其中 $Delta$ 是一些 $Omega$ 中的项，$p$ 也是 $Omega$ 中的项。
+
       我们要求一个直觉主义类型系统中有如下推理规则：
       #TODO
-    ]
+    ]<def-intu-type-sys-2>
   == Topos
     #let char(x) = $"char"(#x)$
     #definition[子对象分类器（Subobject classifier）][
@@ -1058,7 +1089,7 @@
       - 存在态射 $top: 1 -> Omega$
       - 对于所有 $h: A -> Omega$，等化子 $ker(h, top compose circle)$ 存在，也记为 $ker h$
       - 对于所有单态射 $m : B -> A$，存在唯一态射 $char(m) : A -> Omega$ 使得 $B = ker char(m)$ 且 $m$ 就是核态射。
-    ]
+    ]<def-subobj-classifier>
     #proposition[
       图表：
       #align(center)[#commutative-diagram(
@@ -1110,7 +1141,7 @@
       $
         f = g <=> char(d) compose pair(f, g) = top compose circle
       $
-    ]
+    ]<diag-prop>
     #proof[
       若 $f = g$ 显有 $char(d) compose pair(f, f) = char(d) compose d compose f = top compose circle compose f = top compose circle$
 
@@ -1149,6 +1180,122 @@
       $
       继而 $f = h = g$，证毕。
     ]
+    需要指出的是，对于一个 topos $cat$ 来说，我们可以将其视为一个笛卡尔闭范畴构造多项式范畴。然而，$cat[x]$ 并不一定是一个 topos。当然，它无疑仍是一个带自然数对象的笛卡尔闭范畴，我们在@lambda-arithmetic 中建立的理论也仍然都适用。
+  == Topos 的内语言
+    #definition[Topos 的内语言][
+      设 $cat$ 是一个 topos，称 $cat$ 的*内语言*为如下定义的#MBL $scrL(cat)$：
+      - 其类型就是 $cat$ 中的对象，$1, N, * times *, * => *, Omega, P(*)$ 分别就是 $cat$ 中的 $1, N, * times *, *^*, Omega, Omega^*$
+      - 在上下文 $Gamma$ 中，具有 $A$ 类型的项就是 $cat[Gamma]$ 中 $1 -> A$ 的态射。
+      - 具体的，项的构造规则由下表对应给出：
+          #box(width: 50%)[
+            #table(
+              columns: (1fr, 1fr),
+              [$scrL(cat)$], [$cat$],
+              [\*], [$1 -> 1$],
+              [$0$], [$0: 1 -> N$],
+              [$S n$], [$(S : N -> N) compose n$],
+              [$pair(a, b)$], [$pair(a, b) : 1 -> A times B$],
+              [$a ineq a'$], [$char(d_A) compose pair(a, a')$],
+              [$a in alpha$], [$epsilon compose inner(alpha, a) : 1 -> Omega$],
+              [${x: A | phi(x)}$], [
+                $lambda x:A. phi(x)$
+                #footnote[
+                  准确来说，是按照上一章的理论，对应此 $lambda$ 算术项的态射
+                ]
+              ]
+
+            ) 
+          ]
+
+        其中 $d_A$ 的定义如@diag-prop，$epsilon$ 同上一章。
+    ]
+    读者可能已经看出，尽管这里我们采用的是 $a in alpha, P A$ 这样的集合论符号，其实际语义却是通过 @lambda-arithmetic 中的函数类型来实现的。具体来说，$P A$ 无非就是 $Omega^A$ 或者 $A => Omega$，而 $a in alpha$ 则无非是 $alpha$ 这个函数应用在 $a$ 上。
+    #let cornorlr(body) = $lr(corner #body corner.r)$
+
+    回忆@def-intu-type-sys-2，我们在定义 $Omega$ 内部的推理关系时，记号上总会有些不协调。这里我们终于可以对于 $scrL(cat)$ 做以解释#footnote[这里所有的逻辑公式都是元逻辑中的，不是指 $Omega$ 中的内逻辑]：
+    - $intack(Gamma) p : Omega$ 就是在 $scrL(cat)$ 中，有：
+      $
+        forall C, h: C -> A: f compose h = top compose circle
+      $ 
+      其中，设 $Gamma = {x_i: A_i}$ 定义 $A = product A_i$，$f$ 是 $p$ 在 $cat[Gamma]$ 中，根据@cor-abs 得到的态射 $A -> Omega$。
+    - $Delta intack(Gamma) p : Omega$ 就是在 $scrL(cat)$ 中，有：
+      $
+        forall C, h: C -> A:\
+        (forall i: f_i compose h = top compose circle) => f compose h = top compose circle
+      $
+      其中 $A, f$ 如之前定义，$f_i$ 是 $Delta$ 中各个项根据@cor-abs 得到的态射 $A -> Omega$。
+    特别的，考察：
+    $
+      p intack(Gamma) q
+    $
+    假设 $p, q$ 分别对应 $f, g : A -> Omega$，上式定义为：
+    $
+      forall C, h: C -> A:\
+      (f compose h = top compose circle) => g compose h = top compose circle
+    $
+    如果选择 $C = ker f$，$h$ 是核态射，这就是说：
+    $
+      (f compose (ker f -> A) = top compose circle) => g compose (ker f -> A) = top compose circle
+    $
+    显然，其前件根据 $ker$ 的定义是成立的，因此后件也成立。这意味着：
+    $
+      g compose (ker f -> A) = top compose circle
+    $
+    或者可以理解为就是：
+    $
+    ker f subset ker g
+    $
+    上面的推理反过来也是成立的。
+    #proposition[
+      $p intack(Gamma) q$ 当且仅当存在唯一 $e : ker f -> ker g$ 使得：
+      $
+        ker f -> A = (ker g -> A) compose e
+      $
+    ]
+    #proof[
+      - 假设 $p intack(Gamma) q$，之前的推理说明：
+        $
+          g compose (ker f -> A) = top compose circle
+        $
+        根据 $ker g$ 的泛性质立刻就有：
+        #align(center)[#commutative-diagram(
+        node((0, 0), $A$, 1),
+        node((0, 1), $Omega$, 2),
+        node((1, 0), $ker f$, 3),
+        node((1, 1), $1$, 4),
+        node((0, -1), $ker g$, 5),
+        arr(1, 2, $g$),
+        arr(1, 4, $circle$),
+        arr(4, 2, $top$),
+        arr(3, 1, $$),
+        arr(5, 1, $$),
+        arr(3, 5, $exists! e$, dashed_str)
+        )]
+      - 反之，若上面位置的 $e$ 存在，则：
+        $
+          g compose (ker f -> A) = g compose (ker g -> A) compose e = top compose circle compose e = top compose circle
+        $
+        证毕。
+    ]
+    根据上面的命题，我们立刻得到：
+    #corollary[
+      $p intack(Gamma) q, q intack(Gamma) p$ 当且仅当 $f = g$
+    ]
+    #proof[
+      如果 $f = g$ 则结论是显然的，反过来，上面的命题立刻说明 $ker f = ker g$，回忆@def-subobj-classifier 并注意到 $f, g$ 都是 $ker f -> A$ 的特征态射，由唯一性立刻有 $f = g$
+    ]
+    如果我们用 $p =^Gamma q$ 记 $f = g$，那么上面的结论就可以写成：
+    #centerProofTree(
+      rule(
+        $p intack(Gamma) q$,
+        $q intack(Gamma) p$,
+        $p =^Gamma q$
+      )
+    )
+    毫无疑问，这是非常符合直觉的推理规则。
+  
+    
+    
 
 
 // = 基本功能 <intro>
