@@ -1,0 +1,29 @@
+name: Build thesis PDF
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@v3
+        uses: DeterminateSystems/flakehub-cache-action@v3 # or v3.17.1 to pin to a release
+
+      - name: Build thesis PDF
+        run: nix build .#thesis --out-link thesis.pdf
+
+      - name: Upload thesis artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: thesis-pdf
+          path: thesis.pdf
