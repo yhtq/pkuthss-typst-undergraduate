@@ -105,6 +105,8 @@
 
   原书以及诸多其他文献 @jacobs_categorical_nodate @girard_proofs_1989 @pierce_types_2002 @pierce_types_2002 共同强调了一个重要的观点：*类型系统*，*演绎逻辑*与*范畴*之间存在着高度的一致性。本文也将贯彻这一思想。例如，我们重新引入了演绎系统来作为笛卡尔闭范畴和简单类型 Lambda 演算的模板。为了服从这一目的，我们定义演绎系统时采用的规则、公理和记号等可能并不符合传统的形式逻辑习惯，以便更好地强调它与类型论、范畴理论之间的对应关系。
 
+= 预备知识
+  #TODO（简单介绍后文出现的各种概念）
   
 = 简单类型 Lambda 演算与笛卡尔闭范畴 <lambda-arithmetic>
   == 演绎系统<dd-sys-s>
@@ -880,7 +882,7 @@
     ]
     #proposition[
       $cat(*)$ 是 $lamCalc -> CartN$ 的函子
-    ]
+    ]<cat-func>
     之前提到过，我们用多项式范畴来处理在#(STLC)中引入未定常量的操作。下面的定理再次严格说明了这一点：
     #theorem[
       $cat(scrL)[x : 1 -> A] eqv cat(scrL[x : 1 -> A])$
@@ -906,7 +908,7 @@
     基于以上的拓展（或者其中的一部分），我们也可以得到类似的同构结论。这也说明，我们建立的理论是足够普遍的。
 #let MBL = "Mitchell–Bénabou 语言"
 = Topos 与#MBL
-    在@lambda-calculus 中，我们大体上处理了与逻辑学中的*命题逻辑*对应的部分。很自然的，我们希望仿照这样的方式处理带量词的逻辑系统。在看似与此无关的一侧，Lawvere @38b76542-b771-32c2-a3ea-ba3f392713d3 首先意识到范畴论也可以起到类似集合论的作用，成为其他数学理论的逻辑基础。这个想法迅速的被发展为所谓的 *Grothendieck topos*。在 toposs 中，人们也找到了内部的类型理论，它被称为 #MBL#footnote[在原书中它被称为*直觉主义类型系统*，但现代文献中的“直觉主义类型系统”通常是指 Martin-Löf 的依赖类型理论 @Martin-Lof1980-MARITT-18，它是一些现代常用的定理证明器，如 Rocq@Rocq , Lean@Lean 的理论基础。而这里所说的类型系统相较而言更为简化，主要设计目的是与 topos 理论之间建立对应。这里使用的称呼来自于 @mac_lane_sheaves_1994。]。
+    在@lambda-calculus 中，我们大体上处理了与逻辑学中的*命题逻辑*对应的部分。很自然的，我们希望仿照这样的方式处理带量词的逻辑系统。在看似与此无关的一侧，Lawvere @38b76542-b771-32c2-a3ea-ba3f392713d3 首先意识到范畴论也可以起到类似集合论的作用，成为其他数学理论的逻辑基础。这个想法迅速的被发展为所谓的 *Grothendieck topos*。在 topos 中，人们也找到了内部的类型理论，它被称为 #MBL#footnote[在原书中它被称为*直觉主义类型系统*，但现代文献中的“直觉主义类型系统”通常是指 Martin-Löf 的依赖类型理论 @Martin-Lof1980-MARITT-18，它是一些现代常用的定理证明器，如 Rocq@Rocq , Lean@Lean 的理论基础。而这里所说的类型系统相较而言更为简化，主要设计目的是与 topos 理论之间建立对应。这里使用的称呼来自于 @mac_lane_sheaves_1994。]。读者将会看到，在 #(MBL) / topos 中，我们可以“复刻”出一个基于集合论的经典形式逻辑系统。
   == #MBL
     #let ineq = $eq.o$
     首先，我们建立所谓*#MBL*。
@@ -1069,7 +1071,7 @@
       {a} &:= {x : A | x ineq a}\
       exists! x. p(x) &:= exists x'. p(-) ineq {x'}\
       alpha subset beta &:= forall x: A. (x in alpha => x in beta)
-    $
+    $<extra-signature>
     #let intacke = $attach(tack, br: "in")$
     #let intack(gamma) = $attach(tack, br: "in", tr: #gamma)$
     #definition[续@def-intu-type-sys][
@@ -1293,9 +1295,111 @@
       )
     )
     毫无疑问，这是非常符合直觉的推理规则。
+#let scrT = $scr(T)$
+== #(MBL)生成的 topos
+  前面介绍了 topos 的定义以及 topos 的内语言 #MBL，现在我们可以反过来，给出一个#(MBL)生成的 topos 的构造方法。由于 #(MBL)是#(STLC)的拓展，我们可以根据@cat-func 得到一个笛卡尔闭范畴。不幸的是，这个范畴一般而言并不是一个 topos，可能需要额外的理论将其与一个 topos 连接起来。
   
-    
-    
+  这里，我们展示另一种构造：
+  #definition[
+    给定一个#(MBL) $scrL$，我们定义 $scr(A)(scrL)$ 是如下定义的范畴：
+    - 其对象是所有 $P A$ 类型的闭项的等价类，其中 $alpha = alpha'$ 定义为两者具有相同的类型，且：
+      $
+        tack alpha = alpha'
+      $
+      看起来，每个对象就像是一个闭项的集合。
+    - 态射 $f: alpha -> beta$ 定义为 $P(A times B)$ 中的闭项 $abs(f)$，满足：
+      $
+        tack abs(f) subset alpha times beta
+      $
+      （其中 $subset$ 的定义来自 @extra-signature。我们将 $abs(f)$ 称作 $f$ 的*图像（graph）*）
+
+      商掉以下的等价关系：
+      $
+        (f = g) := (tack abs(f) = abs(g))
+      $
+      看起来，这样的态射就像是两个集合之间的二元关系。类似的，单位元被定义为自反关系，而态射的复合则被定义为关系的复合：
+      $
+        abs(g compose f) = {inner(x, z) : A times C | exists y: B. inner(x, y) in abs(f) and inner(y, z) in abs(g)}
+      $
+      仿照二元关系，我们定义 $f$ 的逆关系 $f^(-1)$ 为：
+      $
+        abs(Inv(f)) = {inner(y, x) : B times A | inner(x, y) in abs(f)} 
+      $
+  ]
+  #definition[
+    定义 $scrT(scrL)$ 是 $scr(A)(scrL)$ 的一个子范畴，其对象是所有 $scr(A)$ 中的对象，而态射 $f : alpha -> beta$ 是满足以下条件的态射：
+    $
+      tack forall x. (x in alpha => exists! y. inner(x, y) in abs(f)) 
+    $
+    也就是一般集合论中的*函数*的定义。它也等价于说：
+    $
+      tack abs(id) subset abs(Inv(f) compose f) and abs(id) subset abs(f compose Inv(f))
+    $
+  ]
+  我们有以下颇为熟悉的结论：
+  #lemma[
+    $scrT(scrL)$ 中的态射 $f: alpha -> beta$  是单态射当且仅当 $Inv(f) compose f = id$
+  ]
+  #proof[
+    #TODO
+  ]
+  根据集合论中 $SetCat$ 范畴的直观，当然也有以下命题：
+  #proposition[
+    $scrT(scrL)$ 是笛卡尔闭范畴，并且 $N$ 是 $scrT(scrL)$ 中的一个自然数对象
+  ]
+  #proof[略]
+  我们距离 topos 只差一个子对象分类器了。
+  // 同样根据集合论的直观，子对象分类器的定义也呼之欲出：
+  #theorem[
+    若设：
+    $
+      Omega_(scrT(scrL)) &:= {t: Omega | top}\
+      T : 1 -> &Omega_(scrT(scrL)) := {inner(*, top)}
+    $
+    （回忆@cat-func，范畴中的态射就是类型系统中，项的二元组的等价类），则 $Omega, T$ 是 $scrT(scrL)$ 中的一个子对象分类器。
+  ] 
+  #proof[
+    先证明下面的引理：
+    #lemma[
+      任取态射 $h: alpha -> Omega$，$ker h$ 总存在，也即存在 $ker h$ 使得下图：
+      #align(center)[#commutative-diagram(
+      node((0, 0), $ker h$, 1),
+      node((0, 1), $1$, 2),
+      node((1, 0), $alpha$, 3),
+      node((1, 1), $Omega$, 4),
+      arr(1, 2, $$),
+      arr(1, 3, $$),
+      arr(2, 4, $T$),
+      arr(3, 4, $h$),)]
+      是拉回图表。
+    ]
+    #proof[
+      #TODO
+    ]
+    回到原命题 #TODO
+    ]
+    综上，我们就得到了：
+    #theorem[
+      对于任何#(MBL)，$scrT(scrL)$ 是一个 topos
+    ]
+  == Topos 与内语言
+    根据之前的章节，我们自然希望能够证明 topos 与 #(MBL)之间的某种范畴同构。首先给出定义：
+    #let Top = $bold("Top")$
+    #definition[
+      定义 $Top$ 是以下的范畴：
+      - 其对象是所有*弱 topos*，也即在 topos 中，放宽指数类型的要求，只要求保留 $P A = Omega^A$ 的相关结构。
+      - 其态射是函子 $F$，保持所有弱 topos 的结构。 
+    ]
+    #definition[
+      对于任何 topos $scrT$，我们定义以下的 #Top 中的态射 $eta_scrT: scrT -> scrT(scrL(scrT))$：
+      - 它把对象映成对象本身
+      - 它把态射 $f : A -> B$ 
+    ]
+
+#change_appendix()
+
+= 自由笛卡尔闭范畴
+  作为范畴语言的实际应用，我们在这里具体给出任何一个图上的自由笛卡尔闭范畴的形式化构造方法。#TODO
 
 
 // = 基本功能 <intro>
@@ -1855,7 +1959,7 @@
 
 = 致谢 <thanks>
 
-感谢Typst开发者和原PhD论文模板开发者
+// 感谢Typst开发者和原PhD论文模板开发者
 
 // DOCUMENT END:标记文章结束，页面计数停止
 #doc_end()
