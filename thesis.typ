@@ -103,7 +103,7 @@
   尽管两个领域的起源完全不同，但随着人们研究的深入，它们之间的关系也逐渐被发现。Lawvere 首先尝试使用范畴论作为数学的逻辑基础，并为了使用范畴语言描述逻辑中常见的替换（Substitution）操作，引入了笛卡尔闭范畴（Cartesian Closed Category）的概念 @38b76542-b771-32c2-a3ea-ba3f392713d3。由于形式上的相似性，它与简单类型 Lambda 演算@church_formulation_1940 之间的等价关系迅速被发现。逻辑学家为了增强类型的表达能力，逐渐发展出了更强的类型系统，例如 Martin-Löf 类型理论。独立地，局部笛卡尔闭范畴（Locally Cartesian Closed Category）被范畴学家提出，之后，它被发现与 Martin-Löf 类型理论之间存在着深刻的联系 @seely_locally_1984。Lawvere 与 Tierney 从代数几何的工具中发展出了 topos 的概念以作为集合论的替代@history_of_topos，与其相关联的类型理论 Mitchell–Bénabou 语言也被提出。
   本文大体上按照 《Introduction to Higher Order Categorical Logic》 的脉络，首先介绍一些基础的范畴工具。之后，我们将着重介绍两个重要的对应关系：简单类型 Lambda 演算与笛卡尔闭范畴，topoes 与直觉主义类型系统。主要理论和工具基本与原书一致，但引入顺序和方式可能会做出一些调整，许多记号也被调整为更接近近期文献的习惯。
 
-  原书以及诸多其他文献 @jacobs_categorical_nodate @girard_proofs_1989 @pierce_types_2002 @pierce_types_2002 共同强调了一个重要的观点：*类型系统*，*演绎逻辑*与*范畴*之间存在着高度的一致性。本文也将贯彻这一思想。例如，我们重新引入了演绎系统来作为笛卡尔闭范畴和简单类型 Lambda 演算的模板。为了服从这一目的，我们定义演绎系统时采用的规则、公理和记号等可能并不符合传统的形式逻辑习惯，以便更好地强调它与类型论、范畴理论之间的对应关系。
+  原书以及诸多其他文献 @jacobs_categorical_nodate @girard_proofs_1989 @pierce_types_2002 @pierce_types_2002 共同强调了一个重要的观点：*类型系统*，*演绎逻辑*与*范畴*之间存在着高度的一致性（经常被代数化的表示为，存在一对双向的函子构成范畴同构或者伴随对）。本文也将贯彻这一思想。例如，我们重新引入了演绎系统来作为笛卡尔闭范畴和简单类型 Lambda 演算的模板。为了服从这一目的，我们定义演绎系统时采用的规则、公理和记号等可能并不符合传统的形式逻辑习惯，以便更好地强调它与类型论、范畴理论之间的对应关系。
 
 = 预备知识
   #TODO（简单介绍后文出现的各种概念）
@@ -897,6 +897,20 @@
     #proof[
       也就是要验证 $cat(*) scrL(*) eqv id$ 和 $scrL(*) cat(*) eqv id$ #TODO
     ]
+    范畴同构意味着，对于#(STLC)的研究和笛卡尔闭范畴的研究（在代数意义下）将是完全一致的。例如说，既然 #SetCat 是一个平凡的笛卡尔闭范畴，我们可以以其为基础构造出对应的#(STLC)。如果检查定义，它基本上就恰好描述了数学家基于集合论的所有函数演算。如同 Church @church_formulation_1940 最早所给出的直观，数学家常见的符号：
+    $
+      integral_(a)^(b) f(x) dif x 
+    $
+    可以形式化的表示为以下#(STLC)中的项：
+    $
+      sep(integral, a, b, (lambda x: RR. f space x)) where integral: RR => RR => (RR => RR) => RR
+    $
+    同时，对于 $lamCalc$ 中的始对象 $Lambda_0$，其中的许多可计算性已经充分地得到了研究@church_formulation_1940 @pierce_types_2002，这也就意味着，在任何#STLC/笛卡尔闭范畴中，由定义所给出的基础等价关系都是可以判定的，例如：
+    $
+      sep(integral, a, b, (lambda x: RR. f space x)) = sep(integral, a, b, f)
+    $
+    便是可以机械性判定的结论。
+
     需要说明的是，本章内容大体上以@def-pic 为模板引入连接词和推导规则。以此为基础，我们可以进行许多并不困难的拓展，例如：
     - 在类型系统中引入和类型，在笛卡尔闭范畴中引入余积#footnote[这样的范畴有时也称作*双笛卡尔闭范畴*，（bicartesian closed category）]。它们都对应着（直觉主义的）命题逻辑中的析取操作。
     - 在类型系统中引入空类型，在笛卡尔闭范畴中引入始对象。它们都对应着命题逻辑中的假值。在假值 $F$ 的基础上，$A$ 的否定就可以定义为 $A => F$。
@@ -1079,7 +1093,9 @@
       $
         Delta intack(Gamma) p
       $
-      表示上下文 $Gamma$ 下，$Omega$ 内部的逻辑推理关系，其中 $Delta$ 是一些 $Omega$ 中的项，$p$ 也是 $Omega$ 中的项。
+      表示上下文 $Gamma$ 下，$Omega$ 内部的逻辑推理关系#footnote[
+        为了符号统一，我们将 $tack$ 留给类型断言，而使用 $intacke$ 来表示逻辑推理
+      ]，其中 $Delta$ 是一些 $Omega$ 中的项，$p$ 也是 $Omega$ 中的项。
 
       我们要求一个直觉主义类型系统中有如下推理规则：
       #TODO
@@ -1304,18 +1320,18 @@
     给定一个#(MBL) $scrL$，我们定义 $scr(A)(scrL)$ 是如下定义的范畴：
     - 其对象是所有 $P A$ 类型的闭项的等价类，其中 $alpha = alpha'$ 定义为两者具有相同的类型，且：
       $
-        tack alpha = alpha'
+        intacke alpha ineq alpha'
       $
       看起来，每个对象就像是一个闭项的集合。
     - 态射 $f: alpha -> beta$ 定义为 $P(A times B)$ 中的闭项 $abs(f)$，满足：
       $
-        tack abs(f) subset alpha times beta
+        intacke abs(f) subset alpha times beta
       $
       （其中 $subset$ 的定义来自 @extra-signature。我们将 $abs(f)$ 称作 $f$ 的*图像（graph）*）
 
       商掉以下的等价关系：
       $
-        (f = g) := (tack abs(f) = abs(g))
+        (f = g) := (intacke abs(f) ineq abs(g))
       $
       看起来，这样的态射就像是两个集合之间的二元关系。类似的，单位元被定义为自反关系，而态射的复合则被定义为关系的复合：
       $
@@ -1329,11 +1345,11 @@
   #definition[
     定义 $scrT(scrL)$ 是 $scr(A)(scrL)$ 的一个子范畴，其对象是所有 $scr(A)$ 中的对象，而态射 $f : alpha -> beta$ 是满足以下条件的态射：
     $
-      tack forall x. (x in alpha => exists! y. inner(x, y) in abs(f)) 
+      intacke forall x. (x in alpha => exists! y. inner(x, y) in abs(f)) 
     $
     也就是一般集合论中的*函数*的定义。它也等价于说：
     $
-      tack abs(id) subset abs(Inv(f) compose f) and abs(id) subset abs(f compose Inv(f))
+      intacke abs(id) subset abs(Inv(f) compose f) and abs(id) subset abs(f compose Inv(f))
     $
   ]
   我们有以下颇为熟悉的结论：
@@ -1345,7 +1361,10 @@
   ]
   根据集合论中 $SetCat$ 范畴的直观，当然也有以下命题：
   #proposition[
-    $scrT(scrL)$ 是笛卡尔闭范畴，并且 $N$ 是 $scrT(scrL)$ 中的一个自然数对象
+    $scrT(scrL)$ 是笛卡尔闭范畴，其中：
+    - 乘积对象 $alpha times beta$ 定义为 ${inner(x, y) | x in alpha, y in beta}$
+    - 指数对象 $beta^alpha$ 定义为 ${f: P(A times B) | f "是函数"}$
+    并且，$N$ 是 $scrT(scrL)$ 中的一个自然数对象。
   ]
   #proof[略]
   我们距离 topos 只差一个子对象分类器了。
@@ -1356,7 +1375,7 @@
       Omega_(scrT(scrL)) &:= {t: Omega | top}\
       T : 1 -> &Omega_(scrT(scrL)) := {inner(*, top)}
     $
-    （回忆@cat-func，范畴中的态射就是类型系统中，项的二元组的等价类），则 $Omega, T$ 是 $scrT(scrL)$ 中的一个子对象分类器。
+    则 $Omega, T$ 是 $scrT(scrL)$ 中的一个子对象分类器。
   ] 
   #proof[
     先证明下面的引理：
@@ -1382,19 +1401,138 @@
     #theorem[
       对于任何#(MBL)，$scrT(scrL)$ 是一个 topos
     ]
+  #let Lang = $bold("Lang")$
   == Topos 与内语言
-    根据之前的章节，我们自然希望能够证明 topos 与 #(MBL)之间的某种范畴同构。首先给出定义：
+    根据之前的章节，我们自然希望能够证明 topos 与 #(MBL)之间的某种范畴同构。一个直观问题是，#(MBL)中似乎并没有显式给出的“指数/函数类型”，因此，我们暂时也对 topos 的定义放松这个限制：
+    #definition[弱 topos][
+      称一个范畴 $cat$ 是一个*弱 topos*，如果它满足 topos 的大多数要求，除了不要求一般的指数对象存在，只要求 $P A = Omega^A$ 的相关结构存在。
+    ]
+    所幸，可以证明这个放松并不改变 topos 的本质结构：
+    #lemma[
+      每个弱 topos 都同构于一个 topos
+    ]
+    #proof[略]
+    接下来，我们逐步建立最终的理论：
     #let Top = $bold("Top")$
     #definition[
       定义 $Top$ 是以下的范畴：
-      - 其对象是所有*弱 topos*，也即在 topos 中，放宽指数类型的要求，只要求保留 $P A = Omega^A$ 的相关结构。
-      - 其态射是函子 $F$，保持所有弱 topos 的结构。 
+      - 其对象是所有弱 topos
+      - 其态射是函子 $F$，要求其保持所有弱 topos 的结构
     ]
     #definition[
-      对于任何 topos $scrT$，我们定义以下的 #Top 中的态射 $eta_scrT: scrT -> scrT(scrL(scrT))$：
-      - 它把对象映成对象本身
-      - 它把态射 $f : A -> B$ 
+      定义 $Lang$ 是以下的范畴：
+      - 其对象是所有#(MBL)
+      - 其态射是满足以下条件的*翻译（translation）* $F$：
+        - $F$ 将类型映成类型，并保持所有类型构造规则
+        - $F$ 将闭项映成闭项，并（在内部相等 $ineq$ 意义下）保持所有项构造规则
+        - $F$ 保持所有的定理
+        商掉如下定义的等价关系：
+        $
+          (F = F') := forall Gamma, a. intack(Gamma) F(a) ineq F'(a)
+        $
     ]
+    同时，前几节中介绍的 $scrL, scrT$ 操作也可以顺利的拓展成为 $Top$ 和 $Lang$ 之间的函子
+    #definition[
+      定义 $scrL: Top -> Lang$ 是如下定义的函子：
+      - 对于每个弱 topos $scrT$，$scrL(scrT)$ 就是之前构造的内语言
+      - 对于每个态射 $F: scrT -> scrT'$，$scrL(F)$ 定义为：
+        - 对于 $scrL(scrT)$ 中的类型 $A$ （也是 $scrT$ 中的对象），有： 
+          $
+          scrL(F)(A) = F A
+          $
+        - 对于 $scrL(scrT)$ 中的闭项 $a: A$（也是 $scrT$ 中 $1 -> A$ 的态射），有：
+          $
+          scrL(F)(a) = F a
+          $
+      可以验证，$scrL(F)$ 的确是一个翻译，并且 $scrL$ 确实是函子。
+    ]
+    #proposition[
+      $scrL$ 是全忠实函子
+    ]
+    #proof[略]
+    #definition[
+      定义 $scrT: Lang -> Top$ 是如下定义的函子：
+      - 对于每个#(MBL) $scrL$，$scrT(scrL)$ 就是之前构造的 topos
+      - 对于每个态射 $F: scrL -> scrL'$，$scrT(F)$ 定义为：
+        - 对于 $scrT(scrL)$ 中的对象 $alpha$（也是 $scrL$ 中 $P A$ 类型的闭项），有：
+          $
+          scrT(F)(alpha) = F alpha
+          $
+        - 对于 $scrT(scrL)$ 中的态射 $f: alpha -> beta$（也是 $scrL$ 中 $P(A times B)$ 类型的闭项），有：
+          $
+          abs(scrT(F)(f)) = F abs(f)
+          $
+      可以验证，$scrT(F)$ 的确是一个保持弱 topos 结构的函子，并且 $scrT$ 确实是函子。
+    ]
+    #let bf = $bold("f")$
+    #definition[
+      对于任何 topos $scrT$，我们定义以下的 #Top 中的态射 $xi_scrT: scrT -> scrT(scrL(scrT))$：
+      - 它把对象 $A$ 映成“集合” $bA := {x : A | top}$
+      - 它把态射 $f : A -> B$ 映射成 $bf : bA -> bB$，满足：
+        $
+          abs(bf) = {inner(x, y) : A times B | f compose x = y}#footnote[
+            回忆 $scrL(scrT)$ 中的项是 $scrT$ 中 $1 -> A$ 的态射
+          ]
+        $
+    ]
+    下面的结果应当是非常直接的：
+    #proposition[
+      $xi_scrT$ 保持所有弱 topos 的结构，继而是 #Top 中的态射。
+    ]
+    然而，这样的 $xi_scrT$ 并不能忠实地保持指数对象。考虑：
+    - $xi(B^A) = {x : B^A | top}$
+    - $xi(B) ^ xi(A) = {f: P(A times B) | f "是函数"}$
+    尽管两者的确是同构的对象，但很明显并不相等。然而，可以证明 $xi$ 还保持了 $delta_(*, Omega)$ 对象，并且：
+    #theorem[
+      $xi$ 是范畴同构
+    ]<xi-isom>
+    #proof[略]
+
+    
+    #let ba = $bold(a)$
+    #definition[
+      对于任何#(MBL) $scrL$，我们定义以下的 #Lang 中的态射 $eta_scrL: scrL -> scrL(scrT(scrL))$：
+      - 它把类型 $A$ 映成 $bA := {x : A | top}$
+      - 它把闭项 $a$ 映成 $ba: 1 -> bA$，满足：
+        $
+          abs(ba) = {inner(*, a)}
+        $
+    ]
+    下面的结论说明，如此定义的 $eta$ 忠实地保留了#(MBL) 内部的逻辑结构。
+    #lemma[
+      对于任何类型 $A$，$eta_scrL$ 建立了以下等价关系：
+      $
+        ({"类型为" P A "的闭项" } quo ineq) eqv ({"类型为" bP bA "的闭项" } = {u: P A | top})
+      $
+      特别的，$intacke p$ 当且仅当 $intacke eta_scrL (p)$
+    ]<eta-lemma>
+    我们有如下有趣的结论：
+    #proposition[
+      对于任何 topos $scrT$，总有：
+      $
+        scrL(xi_(scrT)) = eta_(scrL(scrT))\
+      $
+    ]
+    #proof[
+      我们只证明第二个等式。注意到：
+      $
+        #TODO
+      $
+    ]
+    这个性质也表明，我们不能一般的期待 $scrL, scrT$ 是一对范畴同构。这是因为如果它们构成范畴同构，则根据@xi-isom 和上面的结论，我们会得到 $eta$ 也是一个#(MBL)之间的同构。然而稍加思考就会发现，$eta$ 往往不是一个同构。直观上，$scrL$ 中 $P A$ 类型的闭项全部在 $scrL(scrT(scrL))$ 变成了新的类型，这会导致 $scrL(scrT(scrL))$ 中的类型远多于 $scrL$。
+    
+    同时，$eta$ 在类型上也不是单的。在我们的定义下，$A != A'$ 不能排除 $P A = P A'$ 的可能，继而导致 $eta(A) = eta(A')$
+    #proposition[
+      $eta, xi$ 都是自然变换
+    ]
+    #proof[略]
+    虽然并不能得到 $eta$ 是自然同构的事实，但既然我们构造出了 $xi: id -> scrT scrL$ 和 $eta: id -> scrL scrT$，并且 $xi$ 本身是自然同构。自然会想到，是否可以退一步，使用 $Inv(xi)$ 和 $eta$ 形成伴随对？ 大体来说，这样的想法是成立的。但为了使得 $Inv(xi)$ 保持逻辑结构，我们需要做出一点额外的限制条件，并且得到最终的结论：
+    #theorem[
+      假设 topos $scrT$*具有典范的子对象*#footnote[具体定义请参考 @lambek_introduction_1986 中的相关内容]，则存在自然变换 $epsilon: scrT scrL -> id$ 使得 $epsilon compose xi = id$，并且 $epsilon, eta$ 构成一对单位/余单位@ai_jabr ，进而 $(scrL, scrT)$ 构成一对伴随对。
+    ]
+    为了展现这对伴随对的作用，考虑如下的问题：在 #Lang 中，我们可以很容易的找到一个始对象，也就是所有的项/类型都恰好按照规则归纳产生的 #MBL $scrL_0$。使用伴随函子，立刻可以得到 $scrT(scrL_0)$ 也是一个始对象。然而，如果没有 topos 的内语言作为桥梁，仅从定义出现，#Top 中始对象的存在性并不是如此直观的。
+    
+
 
 #change_appendix()
 
