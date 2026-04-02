@@ -34,8 +34,6 @@
         '';
       };
 
-      inherit (pkgs) lib;
-
       typixLib = typix.lib.${system};
 
       src = typixLib.cleanTypstSource ./.;
@@ -92,6 +90,11 @@
             name = "ctheorems";
             version = "1.1.3";
             hash = "sha256-hzWgHWt88VLofnhaq4DB5JAGaWgt1rCDP4O9nknZzVY=";
+          }
+          {
+            name = "oxifmt";
+            version = "1.0.0";
+            hash = "sha256-edTDK5F2xFYWypGpR0dWxwM7IiBd8hKGQ0KArkbpHvI=";
           }
         ];
       };

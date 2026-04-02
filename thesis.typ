@@ -3,7 +3,7 @@
 #import "notes-lib/template.typ": *
 #import "@preview/commute:0.3.0": *
 
-
+#let where = "其中"
 #show: doc => UndergraduateThesis(
   // ctitle必填
   ctitle: "类型系统的范畴语义",
@@ -21,7 +21,7 @@
   department : "数学科学学院",
   major : "数据科学与大数据",
   supervisor_name : "夏壁灿",
-  year_and_month : "二〇二五年五月"
+  year_and_month : "二〇二六年五月"
 ) <title-page>
 
 
@@ -33,17 +33,17 @@
   school : "数学科学学院",
   major : "数据科学与大数据",
   supervisor : "夏壁灿",
-  department : "计算机学院",
-  grade : "中等",
-  title : "助理教授",
+  department : "数学科学学院",
+  grade : "",
+  title : "教授",
   chinese_title : "类型系统的范畴语义",
   english_title : "The Categorical Semantics of Type Theory",
-  sign_pic : image("./images/老师签名.png"),
-  year : 2024,
+  sign_pic : image("asset/pkulogo.svg"),
+  year : 2026,
   month : 5,
   day : 15,
 )[
-这篇文章写得还行
+
 ] // end of check comment
 
 // Copyright
@@ -51,7 +51,7 @@
 
 // 中文摘要
 #ChineseAbstract(
-  keywords : ("Type Theory", "Category Theory", "Formal Logic", "Programming Language")
+  keywords : ("类型论", "范畴论", "范畴语义", "形式逻辑", "程序语言")
 )[
 
 类型理论是形式逻辑的延伸，其中的逻辑符号各自具备不同的类型，类型之间也满足一定的规则。历史上，逻辑学家提出了类型理论，并试图将其作为数学的基础。之后，人们逐渐发现建立在类型系统上的逻辑总是与某些范畴之间存在着深刻的联系。计算机诞生并发展之后，类型理论以及其与范畴之间的联系也被计算机科学家们所关注，并且对程序语言理论的发展产生了重要的影响。

@@ -36,13 +36,31 @@
         "type": "github"
       }
     },
+    "flake-utils_3": {
+      "inputs": {
+        "systems": "systems_3"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1773734432,
-        "narHash": "sha256-IF5ppUWh6gHGHYDbtVUyhwy/i7D261P7fWD1bPefOsw=",
+        "lastModified": 1775036866,
+        "narHash": "sha256-ZojAnPuCdy657PbTq5V0Y+AHKhZAIwSIT2cb8UgAz/U=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "cda48547b432e8d3b18b4180ba07473762ec8558",
+        "rev": "6201e203d09599479a3b3450ed24fa81537ebc4e",
         "type": "github"
       },
       "original": {
@@ -54,11 +72,27 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1773734432,
-        "narHash": "sha256-IF5ppUWh6gHGHYDbtVUyhwy/i7D261P7fWD1bPefOsw=",
+        "lastModified": 1774709303,
+        "narHash": "sha256-D3Q07BbIA2KnTcSXIqqu9P586uWxN74zNoCH3h2ESHg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "cda48547b432e8d3b18b4180ba07473762ec8558",
+        "rev": "8110df5ad7abf5d4c0f6fb0f8f978390e77f9685",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
+      "locked": {
+        "lastModified": 1775036866,
+        "narHash": "sha256-ZojAnPuCdy657PbTq5V0Y+AHKhZAIwSIT2cb8UgAz/U=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "6201e203d09599479a3b3450ed24fa81537ebc4e",
         "type": "github"
       },
       "original": {
@@ -72,14 +106,15 @@
       "inputs": {
         "flake-utils": "flake-utils_2",
         "nixpkgs": "nixpkgs_2",
-        "tinymist-src": "tinymist-src"
+        "tinymist-src": "tinymist-src",
+        "unisonSync": "unisonSync"
       },
       "locked": {
-        "lastModified": 1773828912,
-        "narHash": "sha256-vYFAPpDhzPfo5teI4nt6r9Ml3X5otUjT0lpe5CIJWOU=",
+        "lastModified": 1775112672,
+        "narHash": "sha256-lzK1jaqgV8e3Hjrv76yua5CSBdHV2wYRdkgOnIsxtBc=",
         "owner": "yhtq",
         "repo": "Notes",
-        "rev": "3fefdff101c86bbde3007c209c873c11d7a60941",
+        "rev": "98b1713b983b7f9ba571960116951b8f5d17a9dd",
         "type": "github"
       },
       "original": {
@@ -126,14 +161,29 @@
         "type": "github"
       }
     },
+    "systems_3": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
     "tinymist-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1773824832,
-        "narHash": "sha256-rbVE87BwBOVY+4JsRKVzLR3Bv20Ym+WLoJeNnyiKzlM=",
+        "lastModified": 1774969495,
+        "narHash": "sha256-/dadQAKFJ10Pu1i1lX64ig2kKRMcXupiJjojf+VkigI=",
         "owner": "Myriad-Dreamin",
         "repo": "tinymist",
-        "rev": "9e712db141f2e217a20b0e8280dac1b2604fb668",
+        "rev": "8552a0d315b7f87069338ddffb3ae82ac496f4f8",
         "type": "github"
       },
       "original": {
@@ -162,6 +212,23 @@
         "repo": "typix",
         "type": "github"
       }
+    },
+    "unisonSync": {
+      "inputs": {
+        "flake-utils": "flake-utils_3",
+        "nixpkgs": "nixpkgs_3"
+      },
+      "locked": {
+        "path": "tools/unison-sync",
+        "type": "path"
+      },
+      "original": {
+        "path": "tools/unison-sync",
+        "type": "path"
+      },
+      "parent": [
+        "notes"
+      ]
     }
   },
   "root": "root",
