@@ -3,7 +3,6 @@
 #import "notes-lib/template.typ": *
 #import "@preview/commute:0.3.0": *
 
-#let where = "其中"
 #show: doc => UndergraduateThesis(
   // ctitle必填
   ctitle: "类型系统的范畴语义",
@@ -45,6 +44,9 @@
 )[
 
 ] // end of check comment
+
+#let where = math.serif([其中])
+
 
 // Copyright
 #CopyrightClaim <copy-right>
@@ -110,7 +112,7 @@
   
 = 简单类型 Lambda 演算与笛卡尔闭范畴 <lambda-arithmetic>
   == 演绎系统<dd-sys-s>
-    尽管本文的重点是类型系统与范畴，这节我们还是从形式逻辑的角度引入，使用接近类型系统与范畴的语言重新描述形式逻辑中的演绎操作，从而使得后面的内容更容易理解。#footnote[
+    尽管本文的重点是类型系统与范畴，这节我们还是从形式逻辑的角度引入，使用一个代数化的语言来重新描述推理系统，从而使得后面的内容更容易理解。#footnote[
       当然，演绎系统与类型系统，范畴之间同样有着深刻的关联，包括著名的 Curry-Howard 同构 @Curry1959-CURCLV @Howard1980-HOWTFN-2。这方面进一步的介绍还可以参考 @seely_hyperdoctrines_1983 @girard_proofs_1989
     ]
 
@@ -181,17 +183,60 @@
         "if" A and B tack C "then" A tack B => C 
     $
     #let scrL = $scr(L)$
-    然而，我们可以从更高的角度考虑这个表述：若记原有的演绎系统为 $scrL$，添加一个额外的*假设* $x: T -> A$ 如同在 $scrL$ 中添加了一个新的箭头，并在对应演绎规则下，自由生成了一个新的演绎系统 $scrL(x)$ #footnote[我们使用了类似多项式的记号，直观上可以认为这里添加一个对象自由生成的行为类似于添加未定元得到的多项式空间，之后我们会使用范畴的语言详细介绍。]。在这样的想法下，演绎定理可以表述为：
+    在我们的设置下，它已经由公理 R4b 所包含。然而，我们可以从更高的角度重新考虑这个问题：若记原有的演绎系统为 $scrL$，添加一个额外的*假设* $x: T -> A$ 如同在 $scrL$ 中添加了一个新的箭头，并在对应演绎规则下，自由生成了一个新的演绎系统 $scrL(x)$ #footnote[我们使用了类似多项式的记号，直观上可以认为这里添加一个对象自由生成的行为类似于添加未定元得到的多项式空间，之后我们会使用范畴的语言详细介绍。]。在这样的想法下，演绎定理可以表述为：
     #theorem[演绎定理][
       在正直觉主义演算 $scrL$ 中，任何 $scrL(x : T -> A)$ 中的箭头 $phi(x) : B -> C$ 总对应一个 $scrL$ 中的箭头 $B and A -> C$
     ]<dd-theorem>
     #proof[
-      #TODO
+      忽略一些形式化的细节，应当只需要对以下几种 $scrL(x)$ 中的箭头的构造方式进行归纳：
+      - $scrL$ 中的箭头 $phi(x) = psi : B -> C$，此时我们要找的 $X and A -> C$ 的箭头自然的就是 $psi compose pi_1$
+      - 由 R3c 产生的箭头 $phi(x) = inner(psi_1(x), psi_2(x))$，此时我们设 $C = C_1 and C_2$. 由归纳假设，存在 $scrL$ 中的箭头：
+        $
+          psi'_1: B and A -> C_1, psi'_2: B and A -> C_2
+        $
+        自然的，$inner(psi'_1, psi'_2)$ 就是我们要找的箭头。
+      - 由 R4b 产生的箭头：
+        $
+          phi(x) = duel(psi(x)) where psi(x): (B and C_1) -> C_2
+        $
+        此时设 $C = C_1 => C_2$。由归纳假设，存在 $scrL$ 中的箭头：
+        $
+          psi': (B and C_1) and A -> C_2
+        $
+        直观上，我们需要一个 $(B and A) and C_1 -> C_2$ 的箭头之后，才能利用 R4b 得到我们所希望的，$B and A -> C$。逻辑学的直觉告诉我们，$and$ 构造符应当满足结合性，也即：
+        $
+          (A and B) and C eqv A and (B and C)
+        $
+        其证明#footnote[
+          这里，我们说两个命题 $A, B$ 是等价的是指一对箭头 $f: A -> B, g: B -> A$，也就是通常的逻辑连接词 $<=>$，它比范畴意义的等价（往往要求 $f compose g = 1, g compose f = 1$）略弱一点，因为我们暂时还没有讨论什么样的箭头之间是相等的。
+        ]来自于：
+        $
+          inner(pi_1 compose pi_1, inner(pi_2 compose pi_1, pi_2)), inner(inner(pi_1, pi_1 compose pi_2), pi_2 compose pi_2)
+        $
+        以及交换性：
+        $
+          A and B eqv B and A
+        $
+        其证明来自于：
+        $
+          inner(pi_2, pi_1), inner(pi_2, pi_1)
+        $
+        如此，我们就可以根据交换结合性得到箭头：
+        $
+          eta: (B and C_1) and A eqv (B and A) and C_1\
+        $
+        进而：
+        $
+          psi' compose Inv(eta) : (B and A) and C_1 -> C_2\
+          duel(psi' compose Inv(eta)) : B and A -> (C_1 => C_2) = C
+        $
+        这就得到了我们想要的结果。
+
     ]
     #remark[这里我们只陈述了正直觉主义演算的情形。当然，对于其他常见的演绎系统，例如添加 $or, bot$ 的直觉主义演算，添加排中律的经典逻辑演算，这样的演绎定理也成立，并且证明也是类似的。]
   #let cat = $cal(C)$
   == 笛卡尔闭范畴
-    回顾@dd-sys，不难发现它就是一个图构成一个*范畴*的条件。在这种意义下，只要对演绎系统中的证明做一些形式描述#footnote[也就是将演绎过程 $A -> B$ 的所有证明在某种意义下定义为一个集合]，一个演绎系统自然就是一个范畴。更进一步，仿照演算系统中 $and, ->$ 的定义，我们规定：
+    回顾@dd-sys，不难发现它就是一个图构成一个*范畴*的条件。在这种意义下，只要对演绎系统中的证明做一些形式描述#footnote[也就是将演绎过程 $A -> B$ 的所有证明，在商掉某个等价关系的意义下，组成一个集合]，一个演绎系统自然就是一个范畴。更进一步，仿照演算系统中 $and, ->$ 的定义，我们规定：
     #definition[笛卡尔闭范畴][
       称一个范畴 $cat$ 是一个*笛卡尔闭范畴（Cartesian Closed Category）*，如果它满足以下条件：
       - 具有所有有限直积（继而具有终对象）
@@ -296,13 +341,13 @@
       #align(center)[从 $A$ 命题演绎得到 $B$ 命题的所有证明]
       而后者的含义是：
       #align(center)[从真值命题 $T$ 演绎得到 $A => B$ 命题的所有证明]
-      它们的等价性是通常意义上演绎定理的内容，并不是一个平凡的结果。
+      它们的等价性是通常意义上演绎定理的内容，并不是一个可以忽略的平凡结果。
     ]
   #let Type = $bold("Type")$
   #let STLC = [简单类型 $lambda$ 演算]
   == #STLC 
     #let subst(x, a) = $#x arrow.tail #a$
-    #STLC （Simple type $lambda$ calculus）@church_formulation_1940 @pierce_types_2002 @curry_combinatory_nodate 是逻辑学和计算机科学中非常重要的研究对象。接下来，我们将简单介绍它的定义。
+    *#STLC （Simply typed $lambda$ calculus）*@church_formulation_1940 @pierce_types_2002 @curry_combinatory_nodate 是逻辑学和计算机科学中非常重要的研究对象。接下来，我们将简单介绍它的定义。
     #set enum(numbering: "(a)") 
     #definition[#STLC ][
       我们定义一个*#STLC*是一个形式系统，其中包含如下几类对象：
@@ -342,7 +387,7 @@
         如无特殊说明，我们用 $A, B$ 等大写字母时，它们默认代表一个类型。
       + 项（Term），使用：
         $
-          Gamma x_1 : A, x_2 : B, ... tack t : C
+          Gamma = x_1 : A, x_2 : B, ... tack t : C
         $
         表示项 $t$ 在上下文 $Gamma$ 下具有类型 $C$。$Gamma$ 是一些变量及其类型的集合，称为*上下文*，其中包含所有可以在 $t$ 中自由出现的变量。我们总是假设上下文中，相同的变量不能重复出现。我们有以下的项构造规则：
         - 对于每个类型 $A$，存在可数多的变量#footnote[
@@ -439,6 +484,17 @@
             )
           )
           ]
+        - 扩大上下文规则
+          #align(center)[#rule-set(
+            prooftree(
+              rule(
+                $Gamma subset Gamma'$,
+                $Gamma tack t : A$,
+                $Gamma' tack t : A$
+              )
+            )
+          )
+          ]
       + 等价性规则#footnote[在更关心计算性时，这些规则最好看作有向的化简关系，可以参考 @thompson_type_1991 @pierce_types_2002]。我们用：
           $
             a =^Gamma b 
@@ -512,6 +568,7 @@
             prooftree(
               rule(
                 $Gamma tack a : A$,
+                $Gamma tack f : A => A$,
                 $Gamma tack I(f, a, 0) = a$
               )
             ),
@@ -519,7 +576,7 @@
               rule(
                 $Gamma tack a : A$,
                 $Gamma tack n : N$,
-                $Gamma tack f : A -> A$,
+                $Gamma tack f : A => A$,
                 $Gamma tack I(f, a, S(n)) = sep(f, I(f, a, n))$
               )
             ),
@@ -541,8 +598,18 @@
       ))
     ]
     #proof[
-      #TODO
+      #centerProofTree(rule(
+        rule(rule(
+          $Gamma union {x : A} tack a(x) = b(x)$,
+          $Gamma tack lambda x. a(x) = lambda x. b(x)$ 
+        ),
+        $Gamma tack y : A$,
+        $Gamma tack (lambda x. a(x)) y = (lambda x. b(x)) y$),
+        $Gamma tack a(y) = b(y)$
+        
+      ))
     ]
+    上面的证明中，我们使用了*证明树*的写法，清晰地展示了每一步的推导关系。其中，长横线上方的是（零个或多个）前提，下方的是结论，每个横线都明确地对应一个推导规则。
     #corollary[
       #centerProofTree(rule(
         $Gamma union {x : A} tack a = b$,
@@ -550,9 +617,9 @@
         $Gamma tack a = b$
       ))
     ]
-    #remark[
-      在项的构造规则中，我们简化了上下文 $Gamma$。事实上：*上下文 $Gamma$ 中的项无非是将其中的内容全部作为常量产生的新#(STLC)中无上下文的项*。这种做法符合逻辑学的传统，也与之后我们的代数操作更加对应。当然，更常见的做法是在所有构造规则中允许一个任意（只要不产生冲突）的上下文 $Gamma$。
-    ]
+    // #remark[
+    //   在项的构造规则中，我们简化了上下文 $Gamma$。事实上：*上下文 $Gamma$ 中的项无非是将其中的内容全部作为常量产生的新#(STLC)中无上下文的项*。这种做法符合逻辑学的传统，也与之后我们的代数操作更加对应。当然，更常见的做法是在所有构造规则中允许一个任意（只要不产生冲突）的上下文 $Gamma$。
+    // ]
     #definition[#(STLC)之间的态射][
       设 $scrL, scrL'$ 是两个#(STLC)，称 $F : scrL -> scrL'$ 是它们之间的态射，如果：
       - $F$ 将 $scrL$ 中的类型映射到 $scrL'$ 中的类型，$scrL$ 中的项映射到 $scrL'$ 中的项，并且保持项的类型。
@@ -566,13 +633,26 @@
     ]
     @lambda-calculus 给出的是#(STLC)的基本性质。也就是说，形式系统中可能包含没有出现在规则中，或者并非按照规则被构造的常量项，类型等等。这与逻辑学和计算机科学中的其他相关材料  @pierce_types_2002 @thompson_type_1991 @church_formulation_1940 的习惯，也即将其定义为由某些推导规则自由生成的形式系统并不一致。然而，此种意义下的#(STLC)只不过特指本文定义下的始对象而已。
     #proposition[
-      #lamCalc 中存在始对象
+      #lamCalc 中存在始对象，记为 $lamCalc_0$
     ]
     #proof[
       很容易证明，所有项，类型，等价关系都按照@lambda-calculus 自由生成，不含其他元素的#(STLC)就构成了一个始对象。 
     ]
     #example[
-      #TODO (给出一些具体例子，例如：#(STLC) 中的某些项，类型，以及它们之间的等价关系)
+      所谓 $lamCalc_0$ 中的项/类型，直观来说，就是存在于所有#(STLC)中的项/类型。例如：
+      - $N: Type, N times N: Type, N => N: Type$
+      - $S(0): N, S(S(0)): N, ...$
+      我们还可以定义一些具有熟悉语义的函数，例如：
+      - $"ite"_(A): N => A => A => A$，定义为：
+        $
+          "ite"_A := lambda n. lambda a_1. lambda a_2. I(lambda x. a_1, a_2, n)
+        $
+        也即：当 $n$ 是 $0$ 时返回 $a_2$，当 $n$ 是 $S(m)$ 时返回 $a_1$。
+      - $"prev" : N => N$，定义为：
+        $
+          "prev" := lambda n. I(sep(lambda x. "ite"_N, x, 0, S(n) ) , 0, n)
+        $
+        也即：当 $n$ 是 $0$ 时返回 $0$，当 $n$ 是 $S(m)$ 时返回 $m$。
     ]
     直观上看，@lambda-calculus 中的类型和项的构造规则与@def-ccc 中笛卡尔闭范畴的定义非常相似。其中大部分结构，包括单位类型与终对象，乘积类型与有限直积，都有着很好的对应关系。然而，至此为止，仍有以下问题未被范畴语言解决：
     - 在定义#(STLC)时，我们按照逻辑学的通常习惯，在讨论一个项时，往往要基于某个*上下文*。在使用函数抽象和函数应用时，上下文也会发生变化。然而，一个特定的笛卡尔闭范畴并不能很好的描述上下文的变化。
@@ -713,6 +793,7 @@
     在本文的范围内，有时@def-nat 中的唯一性略显多余。因此，我们称 $N$ 是*弱自然数对象*，如果存在（但未必唯一）满足@def-nat 中图表的 $I(f, a)$。
 
     #let CartN = $bold("Cart")_N$
+    #let Cart = $bold("Cart")$
     #definition[
       定义 #CartN 为所有含有弱自然数对象的笛卡尔闭范畴构成的范畴，其中态射是保持笛卡尔闭结构和自然数对象结构的函子。
     ]
@@ -733,9 +814,9 @@
     ]
     #proposition[
       对于任何笛卡尔闭范畴 $cat$ 和对象 $A, B$，以及态射 $x : A -> B$，多项式范畴 $cat[x]$ 都存在且唯一。
-    ]
+    ]<polycat-existence>
     #proof[
-      大体来说我们使用以下的技术：在范畴 $cat$ 的基础上，我们添加一个新的箭头 $x : A -> B$，并且让它按照笛卡尔闭范畴的规则自由生成。我们忽略一些形式化的细节（#TODO 在附录里补全？）并记这样得到的笛卡尔闭范畴就是 $cat[x]$。事实上，$cat[x]$ 中的对象就是 $cat$ 中的对象，而态射无非由以下几种情况归纳产生：
+      大体来说我们使用以下的技术：在范畴 $cat$ 的基础上，我们添加一个新的箭头 $x : A -> B$，并且让它按照笛卡尔闭范畴的规则自由生成。我们忽略一些形式化的细节#footnote[更加详细的讨论见附录]并记这样得到的笛卡尔闭范畴就是 $cat[x]$。事实上，$cat[x]$ 中的对象就是 $cat$ 中的对象，而态射无非由以下几种情况归纳产生：
       - $cat$ 中的态射 $f$
       - $x$ 本身
       - 两个含 $x$ 的态射的复合 $f(x) compose g(x)$
@@ -1536,10 +1617,286 @@
 
 #change_appendix()
 
-= 自由笛卡尔闭范畴
-  作为范畴语言的实际应用，我们在这里具体给出任何一个图上的自由笛卡尔闭范畴的形式化构造方法。#TODO
+= 多项式与多项式范畴  
+  在正文中，我们省略了诸多关于多项式范畴的细节。这里，我们给出更详尽的解释。
 
+  #let RAlgCat(R) = $#R - bold("Alg")$
+  #let CommRingCat = $bold("CommRing")$
+  #let coslice(C, c) = $#C arrow.b #c$
+  #let cosliceP(C, c) = $(#C arrow.b #c)^*$
+  == 范畴语言下的多项式
+    首先，这里我们使用范畴语言重新定义交换环上的多项式。
+    #definition[余切片范畴@borceux_handbook_1994][
+      设 $cat$ 是一个范畴，$A$ 是 $cat$ 中的一个对象，则称 $cat arrow.b A$ 是 $cat$ 的*余切片范畴*（coslice category，也称为下范畴（under category）)，如果：
+      - 其对象是 $cat$ 中所有以 $A$ 为起点的态射，即所有 $f: A -> B$
+      - 其态射 $h: f -> g$ 是满足 $h compose f = g$ 的态射，即下图：
+        #align(center)[#commutative-diagram(
+        node((0, 0), $B_1$, 1),
+        node((0, 1), $A$, 2),
+        node((1, 0), $B_2$, 3),
+        arr(2, 1, $f$),
+        arr(2, 3, $g$),
+        arr(1, 3, $h$),)]
+    ]
+    #example[
+      设 $CommRingCat$ 是交换环组成的范畴，$R$ 是一个交换环，$coslice(CommRingCat, R)$ 的定义与 $R-$交换代数范畴 $RAlgCat(R)$ 的定义完全相同。
+    ]
+    #definition[带点的余切片范畴][
+      设 $cat$ 是一个范畴，对于任何 $cat$ 中的对象 $A$，任何 $U: coslice(cat, A) -> SetCat$ 是函子，定义如下的范畴：
+      - 其对象是 $cat$ 中所有以 $A$ 为起点的态射 $f: A -> B$，以及 $U(f)$ 中的一个元素 $b$，即 $(f, b)$
+      - 其态射 $h: (f, a) -> (g, b)$ 来自于 $h: B_1 -> B_2$，并满足：
+        - 余切片范畴的条件：$h compose f = g$
+        #align(center)[#commutative-diagram(
+          node((0, 0), $B_1$, 1),
+          node((0, 1), $A$, 2),
+          node((1, 0), $B_2$, 3),
+          arr(2, 1, $f$),
+          arr(2, 3, $g$),
+          arr(1, 3, $h$),)]
+        - 态射保持点不动： $U(h)(a) = b$
+      记作 $cosliceP(cat, A)$
+    ]
+    #theorem[
+      设 $R$ 是交换环，则多项式环 $R[x]$ 恰为 $cosliceP(CommRingCat, R)$ 中的始对象，其中 $U: cosliceP(CommRingCat, R) -> SetCat$ 取遗忘函子。 
+    ]
+    #proof[
+      基本上是多项式环的定义。
+    ]
+  == 多项式范畴
+    #theorem[
+      设 $cat$ 是笛卡尔闭范畴，则 $cat[x : A -> B]$ 就是 $cosliceP(Cart, cat)$ 的始对象，其中 $U: cosliceP(Cart, cat) -> SetCat$ 就取 $F |-> Hom(F A, F B)$#footnote[
+        严格来说，为了使其合法，我们讨论的 $Cart$ 只由所有局部小的笛卡尔闭范畴组成
+      ]。
+    ]
+    #proof[
+      同样的，基本上是多项式范畴的定义。
+    ]
+  == 自由笛卡尔闭范畴
+    作为范畴语言的实际应用，我们在这里具体给出任何一个图上的*自由*笛卡尔闭范畴的形式化构造方法。它回答了正文中多项式范畴的构造方式，以及与其相关的证明的合理性。
 
+    #let GraCat = $bold("Graph")$
+
+    #definition[
+      定义所有图构成的范畴为 $GraCat$，其中对象就是所有的有向图（顶点数量可能无穷），而态射就是所有的图同态。
+    ]
+    #proposition[
+      $GraCat$ 中有平凡的始对象（空图），并且图的积/余积就是 $GraCat$ 中的积/余积。
+    ]
+    #proposition[
+      设 $cat$ 是恰由两点 $a, b$ 以及箭头 $id: a -> a, s: a -> b, t: a -> b, id: b -> b$ 构成的范畴，则：
+      $
+        FunctorCat(cat, SetCat) eqv GraCat
+      $
+      这里的 $eqv$ 是指范畴同构。
+    ]
+    #proof[
+      - 任取 $F : FunctorCat(cat, SetCat)$，可以构造一个图，其顶点集为 $F b$，边集为 $F a$，对于任何一个边 $e: F a$，其起点就是 $(F s)(e)$，终点就是 $(F t)(e)$。
+      - 任取 $G : GraCat$，可以构造一个函子 $F: cat -> SetCat$，满足 $F a = E$，$F b = V$，$F id = id$，$(F s)(e) = s(e)$，$(F t)(e) = t(e)$
+      很容易证明以上的两个构造保持态射，且是互逆的，证毕。
+    ]
+    #corollary[
+      $GraCat$ 是某个范畴的预层范畴，继而具有所有的极限/余极限 @stacks-project
+    ]
+    #definition[
+      记 $GraCat'$ 是所有带有终对象的图构成的范畴，态射仍然是图同态（注意到图同态一定保持终对象）。不难验证 $GraCat'$ 与 $GraCat$ 同构，通过删去/添加终对象的方式给出。
+    ]
+    接下来，我们都在 $GraCat'$ 中讨论问题。如果开始的图没有终对象，只需要简单的添加一个终对象即可。
+
+    使用集合论的语言，可以将一个自由构造过程描述为：
+    - 将一步的构造定义为集合到集合的函数
+    - 从某个初始对象出发，反复迭代这些构造函数，得到一个序列 $X_0, X_1, X_2, ...$，其中 $X_(n+1)$ 是通过对 $X_n$ 应用所有的构造函数得到的集合
+    - 最终的自由对象就是 $X_0, X_1, X_2, ...$ 的某种极限（典型的，例如 $Union_(i: NN) X_i$ ）
+    使用范畴论的语言，我们也可以复刻这一过程。上面对于极限/余极限存在性的论述就确保了最后一步取极限在理论上是安全的，因此接下来我们的主要工作便是将构造过程定义为某种函子了。
+    #definition[
+      回顾笛卡尔闭范畴的定义，我们将以下构造过程定义为 $GraCat' -> GraCat'$ 的自函子 $F$：
+      - 首先，对图 $G$ 添加所有二元直积和指数对象，得到图 $G'$
+        - $G'$ 的顶点集是 $G$ 的顶点集，加上所有的 $A times B, B^A$ 形式的顶点，其中 $A, B$ 是 $G$ 的顶点。这些顶点都是语法的，也就是说，与原图中的顶点完全独立。
+        - $G'$ 的边集是 $G$ 的边集，加上：
+          $
+          &pi_1: A times B -> A, pi_2: A times B -> B, forall A, B\ 
+          &inner(f, g): C -> A times B, forall A, B, C, f: C -> A, g: C -> B\
+          &epsilon: B^A times B -> A, forall A, B\
+          $
+          同样的，这些边也是语法的。
+      - 之后，对 $G'$ 取自反，复合闭包
+      - 再补上边：
+        $
+          &duel(h): A -> C^B, forall A, B, C, h: A times B -> C
+        $
+      - 再次取复合闭包
+      - 添加必要的边使得原终对象仍然是终对象
+      - 对边集做商，商掉的等价关系为@prop-ccc 中的所有等式
+      对于图同态 $xi: G_1 -> G_2$，$F xi$ 定义为：
+        - $(F xi) A = xi A, forall A in Ob(G_1)$
+        - $(F xi) (A times B) = (xi A) times (xi B), forall A, B in Ob(G_1)$
+        - $(F xi) (B^A) = (xi B) ^ (xi A), forall A, B in Ob(G_1)$
+        - $(F xi) id = id$
+        - $(F xi) f = xi f, forall f in "Mor"(G_1)$
+        - $(F xi) pi_1 = pi_1, (F xi) pi_2 = pi_2$
+        - $(F xi) inner(f, g) = inner(xi f, xi g)$
+        - $(F xi) epsilon = epsilon$
+        - $(F xi) (f compose g) = (F xi) f compose (F xi) g$
+        - $(F xi) duel(h) = duel((F xi) h)$
+      可以验证 $(F xi_1) compose (F xi_2) = F (xi_1 compose xi_2)$，因此 $F$ 确实是一个函子。
+
+    ]
+    #remark[
+      如果我们删去其中商掉等价关系的一步，我们得到的就是一个自由的正直觉主义演算的构造步骤了。这也反映了正文中提及的，逻辑演算与对应范畴之间的关系。
+    ]
+    #lemma[
+      $F$ 在对象上是单的（$F X = F Y => X = Y$），进而 $F$ 的像构成范畴 $F GraCat'$
+    ]
+    #proof[
+      检查定义即可。
+    ]
+    #lemma[
+      有伴随关系：
+      $
+        Hom_(F GraCat') (F G_1, F G_2) eqv Hom_(GraCat') (G_1, G_2)
+      $
+      也即：
+      $
+        Hom_(F GraCat') (F G_1, G'_2) eqv Hom_(GraCat') (G_1, U G'_2)
+      $
+      其中 $U$ 是遗忘函子 $F GraCat' -> GraCat'$。
+    ]
+    #proof[
+      事实上，这就是说 $F$ 是忠实的（对于所有态射，$F f = F g => f = g$），检查定义可知这是显然的。
+    ]
+    #corollary[
+      $F$ 保持余极限
+    ]
+    #proof[
+      只需运用如下基本性质：伴随对的左函子保持余极限@ai_jabr
+    ]
+
+    接下来，我们给出一些方便使用的定义和结论，它们保证了我们可以对 $F$ 这个构造过程取极限，并且这个极限具有良好的性质。
+    #definition[$F-$代数范畴][
+      设 $cat$ 是范畴，$F: cat -> cat$ 是 $cat$ 上的一个函子，则称 $RAlgCat(F)$ 是 $F$ 的*代数范畴*，如果：
+      - 其对象是 $cat$ 中的对象 $A$，以及 $cat$ 中的态射 $a: F A -> A$，即 $(A, a)$
+      - 其态射 $h: (A_1, a_1) -> (A_2, a_2)$ 来自于 $h: A_1 -> A_2$，并满足：
+        $
+          h compose a_1 = a_2 compose F h
+        $
+    ]
+    #theorem[Adámek@adamek_automata_1990][
+      设 $cat$ 是具有始对象 $0$ 的范畴，$F$ 保持余极限，对于如下的链：
+      $
+        0 ->^i F(0) ->^F(i) F^2(0) ->^(F^2(i)) F^3(0) -> ...
+      $
+      如果其余极限存在，则它是 $RAlgCat(F)$ 的始对象。
+    ]<adamek>
+    #proof[
+      基本上直接验证定义即可。
+    ]
+    #theorem[Lambek][
+      设 $RAlgCat(F)$ 中有始对象 $(X, a)$，则 $a: F X -> X$ 是同构。换言之，$X$ 是 $F$ 的一个*不动点*。
+    ]<lambek>
+    #proof[
+      注意到 $(F X, F a)$ 也是一个 $F-$代数，根据定义，存在唯一态射 $b: X -> F X$ 使得：
+      $
+        b compose a = F a compose F b = F (a compose b)
+      $
+      这表明，$a compose b$ 也是 $(X, a) -> (X, a)$ 的态射，因为：
+      $
+        a compose b compose a = a compose F (a compose b)
+      $
+      根据始对象的性质，立刻有：
+      $
+        a compose b = id\
+        b compose a = F (a compose b) = F id = id
+      $
+    ]
+    接下来，我们继续之前的构造过程。假设 $G$ 是一个带有终对象的图，则 $G$ 自然的成为了 $coslice(GraCat', G)$ 的始对象。同时，我们有：
+    #proposition[
+      余完备范畴的余切片范畴也是余完备的@stacks-project
+    ]
+    同时，使用显然的图同态 $alpha: G -> F G$，$F$ 自然的延伸为 $coslice(GraCat', G)$ 上的自函子 $F'$，它将 $f: G -> H$ 映射为 $F' f = F f compose alpha$，将：
+    #align(center)[#commutative-diagram(
+    node((0, 0), $G$, 1),
+    node((0, 1), $H_1$, 2),
+    node((1, 0), $H_2$, 3),
+    arr(1, 2, $f_1$),
+    arr(3, 2, $h$),
+    arr(1, 3, $f_2$),)]
+    映为：
+    #align(center)[#commutative-diagram(
+    node((0, 0), $G$, 1),
+    node((0, 1), $F H_1$, 2),
+    node((1, 0), $F H_2$, 3),
+    arr(1, 2, $F' f_1 = F f_1 compose alpha$),
+    arr(3, 2, $F 'h = F h$, label-pos: right),
+    arr(1, 3, $F' f_2 = F f_2 compose alpha$, label-pos: right))]
+    并且不难验证 $F'$ 也保持余极限。根据@adamek，可以找到 $RAlgCat(F')$ 的一个始对象，将其记作 $cal(C) G$，根据@lambek 立刻有：
+    #lemma[
+      $F (cal(C) G) eqv cal(C) G$
+    ]
+    #theorem[
+      设 $H$ 是 $F$ 的不动点，则 $H$ 是笛卡尔闭范畴 
+    ]
+    #proof[
+      考虑 $F$ 的构造过程，所有我们需要的结构都可以从 $F X$ 中找到，将之映回 $X$ 即可。
+    ]
+    截止到现在，我们建立了如下的映射：
+    $
+      cal(C): GraCat' -> Cart
+    $
+    它使用上述的构造过程使用一个图产生了一个笛卡尔闭范畴。不难验证，它自然的作用到态射上，因此是一个函子。为了保证这个过程确实是*自由构造*，我们还需要经典的伴随关系：
+    $
+      Hom(cal(C) G, C) eqv Hom(G, U C)
+    $
+    其中 $U$ 是遗忘函子。为此，我们还需要进一步的性质。
+    #proposition[
+      设 $C$ 是笛卡尔闭范畴，则 $F C$ 与 $C$ 范畴等价 
+    ]<fc-equiv>
+    #proof[
+      我们取 $eta: F C -> C$ 将所有新构造的结构，包括二元积和指数对象及其相关的态射，映回 $C$ 中对应的结构。不难验证它满足本质满，全忠实的条件，因此是范畴等价@ai_jabr。
+    ]
+    #remark[
+      通常来说，$F C$ 与 $C$ 并不是同构的，换言之，在图的意义下两者并不一致。这也很好理解，因为构造过程中我们形式地构造了众多冗余的直积对象，指数对象等。它们与原先标准的直积对象，指数对象等虽然在范畴内同构，但并不相等。@fc-equiv 也是我们将终对象独立处理的原因之一。读者可以检查，如果我们仿照其他结构，语法地构造终对象，那么@fc-equiv 就不成立了。
+    ]
+    #corollary[
+      $cal(C) C$ 与 $C$ 范畴等价
+    ]<calc-equiv>
+    #proposition[
+      $cal(C), U$ 是一对伴随函子
+    ]<free-forget>
+    #proof[
+      - 任取 $f: G -> U C$，由此构造 $U C$ 为 $coslice(GraCat', G)$ 中的一个对象，而@fc-equiv 中定义的 $eta: F C -> C$ 给出了一个 $F'-$代数结构，根据始对象性质，立刻得到一个态射：
+        $
+          g: cal(C) G -> C
+        $
+        并且满足：
+        $
+          g compose (beta: F' (cal(C) G) -> cal(C) G) = eta compose F' g
+        $
+        我们断言 $g$ 一定保持所有笛卡尔闭范畴的结构。例如有：
+        $
+          eta compose (F' g) (A times B) = eta (g A times g B) = g A tensorProduct g B\
+          g compose beta (A times B) = g (A tensorProduct B)
+        $
+        其中，我们用 $tensorProduct$ 表示笛卡尔闭范畴内蕴的直积结构，$times$ 表示构造过程中，语法性的二元直积结构，因此上式表明 $g$ 保持直积。其他的结构是类似的。
+      - 任取 $g: cal(C) G -> C$，直接取 $f = g compose (alpha: G -> cal(C) G)$，其中 $alpha$ 来自于 $cal(C) G$ 的 $G$ 切片对象。
+      可以验证，以上构造对于 $G, C$ 都满足自然性，且是互逆的，因此证毕。
+    ]
+    至此，我们就圆满完成了自由笛卡尔闭范畴的构造。
+  == 多项式范畴的构造
+    作为结果，我们终于可以解释正文中的多项式范畴的来龙去脉了。
+    #theorem[
+      设 $C$ 是一个笛卡尔闭范畴，选择未定元 $x: A -> B$，将其加入 $C$ 中得到一个图 $C(x)$，则 $cal(C) C(x)$ 就是 $C$ 上的多项式范畴 $C[x]$
+    ]
+    #proof[
+      @free-forget 给出：
+      $
+        Hom(cal(C) C(x), D) eqv Hom(C(x), U D)
+      $
+      按照多项式范畴的定义，对于任何给定的 $F: C -> D$ 和 $y: F A -> F B$，条件：
+      - $H$ 在 $C$ 上保持 $F$ 
+      - $H$ 将 $x$ 映为 $y$ 
+      显然唯一确定了上式右侧的一个图同态，因此也唯一确定了上式左侧的一个态射 $cal(C) C(x) -> D$，证毕。
+    ]
+
+    
 // = 基本功能 <intro>
 
 // == 标题
