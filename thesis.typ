@@ -59,15 +59,16 @@
 类型理论是形式逻辑的延伸，其中的逻辑符号各自具备不同的类型，类型之间也满足一定的规则。历史上，逻辑学家提出了类型理论，并试图将其作为数学的基础。之后，人们逐渐发现建立在类型系统上的逻辑总是与某些范畴之间存在着深刻的联系。计算机诞生并发展之后，类型理论以及其与范畴之间的联系也被计算机科学家们所关注，并且对程序语言理论的发展产生了重要的影响。
 
 本文是《Introduction to Higher Order Categorical Logic》@lambek_introduction_1986 一书的读书报告，目标是统一基于类型论的逻辑与范畴，具体介绍其中几个经典的对应关系：简单类型 Lambda 演算与笛卡尔闭范畴，topoes 与直觉主义类型系统。
-  
+
 ]
 
 // English Abstract
 #EnglishAbstract(
   keywords : ("Type Theory", "Category Theory", "Formal Logic", "Programming Language")
-)[ 
+)[
+  Type theory is an extension of formal logic, where logical symbols have different types and there are certain rules governing the relationships between types. Historically, logicians proposed type theory and attempted to use it as a foundation for mathematics. Later, it was gradually discovered that there are profound connections between logics based on type systems and certain categories. With the advent and development of computers, type theory and its connections with category theory have also attracted the attention of computer scientists and have had a significant impact on the development of programming language theory.
 
-#lorem(230)
+  This article is a reading report on the book "Introduction to Higher Order Categorical Logic" @lambek_introduction_1986, aiming to unify type-theoretic logic and category theory, specifically introducing several classic correspondences: simply typed lambda calculus and Cartesian closed categories, toposes and intuitionistic type systems.
 ]
 
 
@@ -107,9 +108,51 @@
 
   原书以及诸多其他文献 @jacobs_categorical_nodate @girard_proofs_1989 @pierce_types_2002 @pierce_types_2002 共同强调了一个重要的观点：*类型系统*，*演绎逻辑*与*范畴*之间存在着高度的一致性（经常被代数化的表示为，存在一对双向的函子构成范畴同构或者伴随对）。本文也将贯彻这一思想。例如，我们重新引入了演绎系统来作为笛卡尔闭范畴和简单类型 Lambda 演算的模板。为了服从这一目的，我们定义演绎系统时采用的规则、公理和记号等可能并不符合传统的形式逻辑习惯，以便更好地强调它与类型论、范畴理论之间的对应关系。
 
+#let cat = $cal(C)$
 = 预备知识
-  #TODO（简单介绍后文出现的各种概念）
-  
+  == 范畴
+    本文中，我们采用标准的范畴论概念。
+    #definition[范畴][
+      一个*范畴* $cat$ 包含以下数据：
+      - 一类对象 $Ob(cat)$
+      - 对任意两个对象 $A, B$，一个态射集合 $Hom(A, B)$，其中元素通常记作 $f: A -> B$，也称为从 $A$ 到 $B$ 的箭头。
+      - 对任意三个对象 $A, B, C$，一个复合运算 $Hom(B, C) times Hom(A, B) -> Hom(A, C)$，满足结合律。
+      - 对任意对象 $A$，一个单位态射 $1_A : A -> A$，满足单位律。
+    ]<def-cat>
+    #definition[同构][
+      范畴 $cat$ 中的两个对象 $A$ 和 $B$ 是同构的，如果存在态射 $f: A -> B$ 和 $g: B -> A$，使得 $g f = 1_A$ 和 $f g = 1_B$。
+    ]
+    #definition[始对象][
+      设 $cat$ 是一个范畴，如果存在一个对象 $0$，使得对于任意对象 $A$，$Hom(0, A)$ 是恰有一个元素，则称 $0$ 是 $cat$ 的*始对象*。始对象若存在，则在同构意义下是唯一的。
+    ]
+  == 函子
+    #definition[
+      一个*函子* $F: cat_1 -> cat_2$ 是一个对象函数 $F: Ob(cat_1) -> Ob(cat_2)$ 和一个态射函数 $F: Hom_(cat_1)(A, B) -> Hom_(cat_2)(F A, F B)$，满足保持复合和单位态射的性质。
+    ]<def-functor>
+    #definition[自然变换][
+      给定两个函子 $F, G: cat_1 -> cat_2$，一个*自然变换* $alpha: F => G$ 是一个态射族 $alpha_A : F A -> G A$，满足对于任意态射 $f: A -> B$，有交换图：
+      #align(center)[#commutative-diagram(
+        node((0, 0), $F A$, 1),
+        node((0, 1), $G A$, 2),
+        node((1, 0), $F B$, 3),
+        node((1, 1), $G B$, 4),
+        arr(1, 2, $alpha_A$),
+        arr(1, 3, $F f$),
+        arr(2, 4, $G f$),
+        arr(3, 4, $alpha_B$),)]
+    ]
+    #definition[伴随函子][
+      设 $F, G$ 是两个函子，如果有自然同构 $Hom (F *, -) eqv Hom (*, G -)$，则称 $F$ 是 $G$ 的*左伴随函子*，$G$ 是 $F$ 的*右伴随函子*。
+    ]
+  == 直积/直和
+    #definition[直积对象][
+      范畴 $cat$ 中对象 $A, B$ 的一个*直积对象*是一个对象 $A times B$，以及两个态射 $pi_1: A times B -> A, pi_2: A times B -> B$，满足以下性质：对于任意对象 $C$ 和态射 $f: C -> A, g: C -> B$，存在唯一的态射 $pair(f, g): C -> A times B$，使得 $pi_1 pair(f, g) = f, pi_2 pair(f, g) = g$
+    ]
+    #let copair(f, g) = $#f + #g$
+    #definition[直和对象][
+      范畴 $cat$ 中对象 $A, B$ 的一个*直和对象*是一个对象 $A + B$，以及两个态射 $iota_1: A -> A + B, iota_2: B -> A + B$，满足以下性质：对于任意对象 $C$ 和态射 $f: A -> C, g: B -> C$，存在唯一的态射 $copair(f, g): A + B -> C$，使得 $(copair(f, g)) compose iota_1 = f, (copair(f, g)) compose iota_2 = g$
+    ]
+
 = 简单类型 Lambda 演算与笛卡尔闭范畴 <lambda-arithmetic>
   == 演绎系统<dd-sys-s>
     尽管本文的重点是类型系统与范畴，这节我们还是从形式逻辑的角度引入，使用一个代数化的语言来重新描述推理系统，从而使得后面的内容更容易理解。#footnote[
@@ -119,14 +162,14 @@
     在经典的形式逻辑中，最基本的对象是*公式*。根据某些规则和公理，我们可以演绎得到某个公式的*证明*。可被证明的公式就是定理。抽象的，我们可以定义：
     #definition[
       一个*演绎系统*是一个图，其节点是公式，箭头表示公式之间的演绎关系，包括以下运算：
-      - 任何节点 $A$ 具备单位 $1_A : A -> A$，也即 
+      - 任何节点 $A$ 具备单位 $1_A : A -> A$，也即
 
           R1a: #centerProofTree(
             rule(
               $1_A: A -> A$,
             )
           )
-        
+
       - 任何箭头 $f: A -> B, g: B -> C$ 具备复合 $g f: A -> C$，也即
 
           R1b: #centerProofTree(
@@ -180,7 +223,7 @@
     ]<def-pic>
     传统上，演绎定理是形式逻辑中非常重要的结论，在通常的证明论中，它被表述为：
     $
-        "if" A and B tack C "then" A tack B => C 
+        "if" A and B tack C "then" A tack B => C
     $
     #let scrL = $scr(L)$
     在我们的设置下，它已经由公理 R4b 所包含。然而，我们可以从更高的角度重新考虑这个问题：若记原有的演绎系统为 $scrL$，添加一个额外的*假设* $x: T -> A$ 如同在 $scrL$ 中添加了一个新的箭头，并在对应演绎规则下，自由生成了一个新的演绎系统 $scrL(x)$ #footnote[我们使用了类似多项式的记号，直观上可以认为这里添加一个对象自由生成的行为类似于添加未定元得到的多项式空间，之后我们会使用范畴的语言详细介绍。]。在这样的想法下，演绎定理可以表述为：
@@ -208,7 +251,7 @@
           (A and B) and C eqv A and (B and C)
         $
         其证明#footnote[
-          这里，我们说两个命题 $A, B$ 是等价的是指一对箭头 $f: A -> B, g: B -> A$，也就是通常的逻辑连接词 $<=>$，它比范畴意义的等价（往往要求 $f compose g = 1, g compose f = 1$）略弱一点，因为我们暂时还没有讨论什么样的箭头之间是相等的。
+          这里，我们说两个命题 $A, B$ 是等价的是指存在一对箭头 $f: A -> B, g: B -> A$，但不要求其他性质，也就是通常的逻辑连接词 $<=>$，它比范畴意义的同构（往往要求 $f compose g = 1, g compose f = 1$）略弱一点，因为我们暂时还没有讨论什么样的箭头之间是相等的。
         ]来自于：
         $
           inner(pi_1 compose pi_1, inner(pi_2 compose pi_1, pi_2)), inner(inner(pi_1, pi_1 compose pi_2), pi_2 compose pi_2)
@@ -234,7 +277,6 @@
 
     ]
     #remark[这里我们只陈述了正直觉主义演算的情形。当然，对于其他常见的演绎系统，例如添加 $or, bot$ 的直觉主义演算，添加排中律的经典逻辑演算，这样的演绎定理也成立，并且证明也是类似的。]
-  #let cat = $cal(C)$
   == 笛卡尔闭范畴
     回顾@dd-sys，不难发现它就是一个图构成一个*范畴*的条件。在这种意义下，只要对演绎系统中的证明做一些形式描述#footnote[也就是将演绎过程 $A -> B$ 的所有证明，在商掉某个等价关系的意义下，组成一个集合]，一个演绎系统自然就是一个范畴。更进一步，仿照演算系统中 $and, ->$ 的定义，我们规定：
     #definition[笛卡尔闭范畴][
@@ -266,7 +308,7 @@
     $
       forall h: C and B -> A, h^*: C -> (B => A) = eta(h)
     $<def-duel>
-    
+
     #proposition[
       在由笛卡尔闭范畴给出的正直觉主义演算中，有：
       - E1: $f 1 = 1 f = f, (h g) f = h (g f)$
@@ -298,7 +340,7 @@
         Inv(eta) (Hom(eta(h) , A^B)) = Inv(eta) ((x |-> x eta(h)) id) = h
       $
       因此交换图就给出了需要的等式。
-      
+
       #footnote[
         这里的 $epsilon$ 通常被称为伴随函子的余单位 @ai_jabr，这个等式也是余单位的常见性质
       ]
@@ -306,10 +348,10 @@
     上面的命题也再次解释了演绎系统与范畴之间的关系：*一个范畴就是一个演绎系统加上一些"证明"之间的等式。*
     #corollary[有等式：
       $
-        duel(h) compose k = duel(h compose (k times id)) 
+        duel(h) compose k = duel(h compose (k times id))
       $
       它可以视作某种分配关系。
-    ]
+    ]<duel-distribute>
     #proof[
       $
         duel(h) compose k  &= duel(epsilon compose (duel(h) k times id)))\
@@ -345,10 +387,10 @@
     ]
   #let Type = $bold("Type")$
   #let STLC = [简单类型 $lambda$ 演算]
-  == #STLC 
+  == #STLC
     #let subst(x, a) = $#x arrow.tail #a$
     *#STLC （Simply typed $lambda$ calculus）*@church_formulation_1940 @pierce_types_2002 @curry_combinatory_nodate 是逻辑学和计算机科学中非常重要的研究对象。接下来，我们将简单介绍它的定义。
-    #set enum(numbering: "(a)") 
+    #set enum(numbering: "(a)")
     #definition[#STLC ][
       我们定义一个*#STLC*是一个形式系统，其中包含如下几类对象：
       + 类型（Type），满足规则：
@@ -497,7 +539,7 @@
           ]
       + 等价性规则#footnote[在更关心计算性时，这些规则最好看作有向的化简关系，可以参考 @thompson_type_1991 @pierce_types_2002]。我们用：
           $
-            a =^Gamma b 
+            a =^Gamma b
           $
           或者
           $
@@ -601,12 +643,12 @@
       #centerProofTree(rule(
         rule(rule(
           $Gamma union {x : A} tack a(x) = b(x)$,
-          $Gamma tack lambda x. a(x) = lambda x. b(x)$ 
+          $Gamma tack lambda x. a(x) = lambda x. b(x)$
         ),
         $Gamma tack y : A$,
         $Gamma tack (lambda x. a(x)) y = (lambda x. b(x)) y$),
         $Gamma tack a(y) = b(y)$
-        
+
       ))
     ]
     上面的证明中，我们使用了*证明树*的写法，清晰地展示了每一步的推导关系。其中，长横线上方的是（零个或多个）前提，下方的是结论，每个横线都明确地对应一个推导规则。
@@ -636,7 +678,7 @@
       #lamCalc 中存在始对象，记为 $lamCalc_0$
     ]
     #proof[
-      很容易证明，所有项，类型，等价关系都按照@lambda-calculus 自由生成，不含其他元素的#(STLC)就构成了一个始对象。 
+      很容易证明，所有项，类型，等价关系都按照@lambda-calculus 自由生成，不含其他元素的#(STLC)就构成了一个始对象。
     ]
     #example[
       所谓 $lamCalc_0$ 中的项/类型，直观来说，就是存在于所有#(STLC)中的项/类型。例如：
@@ -681,7 +723,7 @@
     #example[
       在 #SetCat 中，自然数集合 $NN$ 自然应该是一个自然数对象。检查定义，给定：
       $
-        1 ->^a A ->^f A 
+        1 ->^a A ->^f A
       $
       只需要按照如下标准的方式进行递归定义：
       $
@@ -844,24 +886,63 @@
       进而，我们可以忽略其顺序，定义 $cat[x_1, x_2] := cat[inner(x_1, x_2)]$
     ]
     #proof[
-      #TODO
+      略
     ]
 
     定义了多项式范畴之后，自然会想到@dd-theorem 能否推广到多项式范畴中。答案是肯定的。
     #theorem[函数完备性][
       设未定元 $x : 1 -> A$，对于所有多项式 $phi(x) : B -> C$（也即 $cat[x]$ 中的一个态射），存在 $cat$ 中唯一一个态射 $f : A times B -> C$ 使得：
       $
-        f compose ((x compose circle : A -> A) times B) = phi(x)
+        f compose inner((x compose circle : B -> A), id\: B -> B)) = phi(x)
       $
     ]<func-completeness>
     #proof[
-      #TODO
+      类似的，对 $phi(x)$ 进行归纳：
+      - 若 $phi(x) = x$，则 $f = pi_1$ 即满足要求
+      - 若 $phi(x) = inner(phi_1 (x), phi_2 (x))$，设：
+        $
+          f_1 compose inner(x compose circle, id) = phi_1(x), f_2 compose inner(x compose circle, id) = phi_2(x)
+        $
+        立刻就有：
+        $
+          inner(f_1, f_2) compose inner(x compose circle, id) = inner(phi_1(x), phi_2(x)) = phi(x)
+        $
+      - 若 $phi(x) = phi_1 (x) compose phi_2 (x)$，设：
+        $
+          f_1 compose inner(x compose circle, id) = phi_1(x), f_2 compose inner(x compose circle, id) = phi_2(x)
+        $
+        则：
+        $
+          phi(x) &= f_1 compose inner(x compose circle, id) compose f_2 compose inner(x compose circle, id) \
+          &= f_1 compose inner(x compose circle compose f_2, f_2) compose inner(x compose circle, id) \
+          &= f_1 compose inner(x compose circle , f_2) compose inner(x compose circle, id) \
+          &= f_1 compose inner(x compose circle compose inner(x compose circle, id), f_2 compose inner(x compose circle, id)) \
+          &= f_1 compose inner(x compose circle , f_2 compose inner(x compose circle, id)) \
+          &= f_1 compose inner(pi_1, f_2) compose inner(x compose circle, id) \
+        $
+        可见取 $f = f_1 compose inner(pi_1, f_2)$ 即可满足要求
+      - 若 $phi(x) : B -> (C_1 => C_2) = duel(phi_1(x): B times C_1 -> C_2)$，设：
+        $
+          (f_1: A times (B times C_1) -> C_2) compose inner(x compose circle, id) = phi_1(x)
+        $
+        则（应用@duel-distribute） ：
+        $
+          // duel(f_1 compose eqv) compose (x compose circle) = duel(f_1 compose inner(x compose circle, pi_2)) = duel(f_1 compose inner(x compose circle, id) compose pi_2) = duel(phi_1(x) compose pi_2)
+          duel(f_1 compose eqv) compose inner(x compose circle, id) &= duel(f_1 compose eqv compose inner(inner(x compose circle, id) compose pi_1, pi_2)) \
+          &= duel(f_1 compose eqv compose inner(inner(x compose circle, pi_1), pi_2)) \
+          &= duel(f_1 compose inner(x compose circle, inner(pi_1, pi_2))) \
+          &= duel(f_1 compose inner(x compose circle, id)) \
+          &= duel(phi_1 (x)) \
+          &= phi(x) \
+        $
+        其中 $eqv: (A times B) times C_1 -> A times (B times C_1)$\
+        可见取 $f = duel(f_1 compose eqv)$ 即满足要求
     ]
     #corollary[
       设未定元 $x : 1 -> A$，对于任何多项式 $phi(x): 1 -> C$，$cat$ 中存在唯一的态射 $g : A -> C$ 使得 $g compose x = phi(x)$，或者存在唯一 $h : 1 -> C^A$ 使得：
       $
         epsilon compose inner(h, x) = phi(x)
-      $ 
+      $
     ]<cor-abs>
     #proof[
       套用@func-completeness 并注意到 $A times 1 eqv A$ 立刻得到需要的 $g$。至于 $h$ 只需使用@def-ccc 中的自然同构即可。所求等式就是@ccc-e-app 的结论。
@@ -871,7 +952,7 @@
       设 $cat$ 是一个含有弱自然数对象 $N$ 的笛卡尔闭范畴，则对任何未定元 $x : 1 -> A$，$N$ 也是 $cat[x]$ 中的弱自然数对象。
     ]
     #proof[
-      #TODO
+      略
     ]
     #let bL = $bold(L)$
 
@@ -880,7 +961,7 @@
     最后，我们可以开始着手进行本章的最终结论了。我们将证明，#(STLC)构成的范畴 #lamCalc 与所有含有弱自然数对象的笛卡尔闭范畴构成的范畴 #CartN 是范畴同构的。为此，我们分别构造两个方向上的函子。
 
     #definition[
-      称一个带弱自然数对象的笛卡尔闭范畴 $cat$ 的*内语言*（internal language）为如下定义的#(STLC) $bL(cat)$:
+      称一个带弱自然数对象的笛卡尔闭范畴 $cat$ 的*内语言*（internal language）为如下定义的#(STLC) $scrL(cat)$:
       - 其类型为 $cat$ 中的对象，$1, N, * times *, * => *$ 分别就是 $cat$ 中的 $1, N, * times *, *^*$
       - 在上下文 $Gamma$ 中，具有 $A$ 类型的项就是 $cat[Gamma]$ 中 $1 -> A$ 的态射。其中 $cat[Gamma]$ 的含义是将 $Gamma$ 中所有的 $x_i : A_i$ 视作未定元 $x_i : 1 -> A_i$，构造相应的多项式范畴。
 
@@ -909,7 +990,7 @@
           )
           ]
         由上节对@cor-abs 的解释给出
-      - 等式规则就是范畴中的等式，也即 $Gamma tack a = b$ 解释为在范畴 $cat[Gamma]$ 中，有态射间的等式 $a = b$ 
+      - 等式规则就是范畴中的等式，也即 $Gamma tack a = b$ 解释为在范畴 $cat[Gamma]$ 中，有态射间的等式 $a = b$
 
         容易检验，@lambda-calculus 中的等价性规则在我们给出的内语言中都成立。
     ]
@@ -928,9 +1009,6 @@
       arr(3, 4, $F$),)]
         定义 $scrL(F)(t) := F_Gamma (t)$
       则它具有函子性。
-    ]
-    #proof[
-      #TODO
     ]
     #definition[
       称一个#(STLC) $scrL$ 的*语法范畴*（Syntactic Category）是如下定义的范畴 $cat(scrL)$：
@@ -966,21 +1044,43 @@
     ]<cat-func>
     之前提到过，我们用多项式范畴来处理在#(STLC)中引入未定常量的操作。下面的定理再次严格说明了这一点：
     #theorem[
-      $cat(scrL)[x : 1 -> A] eqv cat(scrL[x : 1 -> A])$
+      $cat(scrL)[x : 1 -> A] eqv cat(scrL[x : 1 -> A])$，且该同构关于 $scrL$ 是自然的
     ]
     #proof[
-      #TODO
+      根据定义，$cat(scrL[x : 1 -> A])$ 中每个 $1 -> A$ 的态射就是 $scrL[x : 1 -> A]$ 中每个 $A$ 类型的项（注意到 $1$ 类型的项是唯一的），因此结论是显然的。
     ]
     最终，我们可以着手证明#lamCalc 与 #CartN 的范畴同构了。
     #theorem[
-      $cat(*), scrL(*)$ 构成了一对范畴同构 $lamCalc eqv CartN$
+      $cat(*), scrL(*)$ 构成了一对范畴之间的等价 $lamCalc eqv CartN$
     ]
     #proof[
-      也就是要验证 $cat(*) scrL(*) eqv id$ 和 $scrL(*) cat(*) eqv id$ #TODO
+      也就是要验证 $cat(*) scrL(*) eqv id$ 和 $scrL(*) cat(*) eqv id$
+      - 对于一个#(STLC) $L$，考虑 $scrL(cat(L))$，其类型就是 $L$ 中的类型，$Gamma$ 上下文中的 $A$ 类型的项就是 $cat(L)[Gamma]$ 中的 $1 -> A$ 的态射。而：
+        $
+          cat(L)[Gamma] eqv cat(L[Gamma])
+        $
+        立刻得到 $Gamma$ 上下文下 $scrL(cat(L))$ 的项和 $L$ 的项同构。由于该关系对 $L$ 是自然的，因此该同构具有函子性。
+      - 对于一个含有弱自然数对象的笛卡尔闭范畴 $cat$，考虑 $cat(scrL(cat))$，其对象就是 $scrL(cat)$ 中的类型，也即 $cat$ 中的对象。对于 $A, B$ 两个对象，$A -> B$ 的态射就是二元组 $(x, t[x])$，其中 $x$ 是 $cat$ 中 $1 -> A$ 的态射，而 $t[x]$ 是 $cat[x]$ 中 $1 -> B$ 的态射。根据@func-completeness 的推论，我们有：
+        $
+          exists! g: A -> B. g compose x = t[x]
+        $
+        且 $g$ 是 $cat$ 中的态射。这表明 $cat(scrL(cat))$ 中的态射唯一对应 $cat$ 中的一个同类型态射。
+
+        反之，对于任何 $cat$ 中的态射 $g: A -> B$，根据定义所有的二元组：
+        $
+          (x, g)
+        $
+        都相等，既然总有：
+        $
+          x tack g = g
+        $
+        因此 $g$ 也唯一对应 $cat(scrL(cat))$ 中的一个态射。
+
+        不难验证，以上两个方向的对应具有函子性，且是互逆的。这就给出了 $cat(scrL(cat))$ 与 $cat$ 之间的同构。
     ]
-    范畴同构意味着，对于#(STLC)的研究和笛卡尔闭范畴的研究（在代数意义下）将是完全一致的。例如说，既然 #SetCat 是一个平凡的笛卡尔闭范畴，我们可以以其为基础构造出对应的#(STLC)。如果检查定义，它基本上就恰好描述了数学家基于集合论的所有函数演算。如同 Church @church_formulation_1940 最早所给出的直观，数学家常见的符号：
+    范畴等价意味着，对于#(STLC)的研究和笛卡尔闭范畴的研究（在代数意义下）几乎是完全一致的。例如说，既然 #SetCat 是一个平凡的笛卡尔闭范畴，我们可以以其为基础构造出对应的#(STLC)。如果检查定义，它基本上就恰好描述了数学家基于集合论的所有函数演算。如同 Church @church_formulation_1940 最早所给出的直观，数学家常见的符号：
     $
-      integral_(a)^(b) f(x) dif x 
+      integral_(a)^(b) f(x) dif x
     $
     可以形式化的表示为以下#(STLC)中的项：
     $
@@ -1303,7 +1403,7 @@
                 ]
               ]
 
-            ) 
+            )
           ]
 
         其中 $d_A$ 的定义如@diag-prop，$epsilon$ 同上一章。
@@ -1315,7 +1415,7 @@
     - $intack(Gamma) p : Omega$ 就是在 $scrL(cat)$ 中，有：
       $
         forall C, h: C -> A: f compose h = top compose circle
-      $ 
+      $
       其中，设 $Gamma = {x_i: A_i}$ 定义 $A = product A_i$，$f$ 是 $p$ 在 $cat[Gamma]$ 中，根据@cor-abs 得到的态射 $A -> Omega$。
     - $Delta intack(Gamma) p : Omega$ 就是在 $scrL(cat)$ 中，有：
       $
@@ -1395,7 +1495,7 @@
 #let scrT = $scr(T)$
 == #(MBL)生成的 topos
   前面介绍了 topos 的定义以及 topos 的内语言 #MBL，现在我们可以反过来，给出一个#(MBL)生成的 topos 的构造方法。由于 #(MBL)是#(STLC)的拓展，我们可以根据@cat-func 得到一个笛卡尔闭范畴。不幸的是，这个范畴一般而言并不是一个 topos，可能需要额外的理论将其与一个 topos 连接起来。
-  
+
   这里，我们展示另一种构造：
   #definition[
     给定一个#(MBL) $scrL$，我们定义 $scr(A)(scrL)$ 是如下定义的范畴：
@@ -1420,13 +1520,13 @@
       $
       仿照二元关系，我们定义 $f$ 的逆关系 $f^(-1)$ 为：
       $
-        abs(Inv(f)) = {inner(y, x) : B times A | inner(x, y) in abs(f)} 
+        abs(Inv(f)) = {inner(y, x) : B times A | inner(x, y) in abs(f)}
       $
   ]
   #definition[
     定义 $scrT(scrL)$ 是 $scr(A)(scrL)$ 的一个子范畴，其对象是所有 $scr(A)$ 中的对象，而态射 $f : alpha -> beta$ 是满足以下条件的态射：
     $
-      intacke forall x. (x in alpha => exists! y. inner(x, y) in abs(f)) 
+      intacke forall x. (x in alpha => exists! y. inner(x, y) in abs(f))
     $
     也就是一般集合论中的*函数*的定义。它也等价于说：
     $
@@ -1457,7 +1557,7 @@
       T : 1 -> &Omega_(scrT(scrL)) := {inner(*, top)}
     $
     则 $Omega, T$ 是 $scrT(scrL)$ 中的一个子对象分类器。
-  ] 
+  ]
   #proof[
     先证明下面的引理：
     #lemma[
@@ -1517,7 +1617,7 @@
       定义 $scrL: Top -> Lang$ 是如下定义的函子：
       - 对于每个弱 topos $scrT$，$scrL(scrT)$ 就是之前构造的内语言
       - 对于每个态射 $F: scrT -> scrT'$，$scrL(F)$ 定义为：
-        - 对于 $scrL(scrT)$ 中的类型 $A$ （也是 $scrT$ 中的对象），有： 
+        - 对于 $scrL(scrT)$ 中的类型 $A$ （也是 $scrT$ 中的对象），有：
           $
           scrL(F)(A) = F A
           $
@@ -1569,7 +1669,7 @@
     ]<xi-isom>
     #proof[略]
 
-    
+
     #let ba = $bold(a)$
     #definition[
       对于任何#(MBL) $scrL$，我们定义以下的 #Lang 中的态射 $eta_scrL: scrL -> scrL(scrT(scrL))$：
@@ -1601,7 +1701,7 @@
       $
     ]
     这个性质也表明，我们不能一般的期待 $scrL, scrT$ 是一对范畴同构。这是因为如果它们构成范畴同构，则根据@xi-isom 和上面的结论，我们会得到 $eta$ 也是一个#(MBL)之间的同构。然而稍加思考就会发现，$eta$ 往往不是一个同构。直观上，$scrL$ 中 $P A$ 类型的闭项全部在 $scrL(scrT(scrL))$ 变成了新的类型，这会导致 $scrL(scrT(scrL))$ 中的类型远多于 $scrL$。
-    
+
     同时，$eta$ 在类型上也不是单的。在我们的定义下，$A != A'$ 不能排除 $P A = P A'$ 的可能，继而导致 $eta(A) = eta(A')$
     #proposition[
       $eta, xi$ 都是自然变换
@@ -1612,12 +1712,12 @@
       假设 topos $scrT$*具有典范的子对象*#footnote[具体定义请参考 @lambek_introduction_1986 中的相关内容]，则存在自然变换 $epsilon: scrT scrL -> id$ 使得 $epsilon compose xi = id$，并且 $epsilon, eta$ 构成一对单位/余单位@ai_jabr ，进而 $(scrL, scrT)$ 构成一对伴随对。
     ]
     为了展现这对伴随对的作用，考虑如下的问题：在 #Lang 中，我们可以很容易的找到一个始对象，也就是所有的项/类型都恰好按照规则归纳产生的 #MBL $scrL_0$。使用伴随函子，立刻可以得到 $scrT(scrL_0)$ 也是一个始对象。然而，如果没有 topos 的内语言作为桥梁，仅从定义出现，#Top 中始对象的存在性并不是如此直观的。
-    
+
 
 
 #change_appendix()
 
-= 多项式与多项式范畴  
+= 多项式与多项式范畴
   在正文中，我们省略了诸多关于多项式范畴的细节。这里，我们给出更详尽的解释。
 
   #let RAlgCat(R) = $#R - bold("Alg")$
@@ -1657,7 +1757,7 @@
       记作 $cosliceP(cat, A)$
     ]
     #theorem[
-      设 $R$ 是交换环，则多项式环 $R[x]$ 恰为 $cosliceP(CommRingCat, R)$ 中的始对象，其中 $U: cosliceP(CommRingCat, R) -> SetCat$ 取遗忘函子。 
+      设 $R$ 是交换环，则多项式环 $R[x]$ 恰为 $cosliceP(CommRingCat, R)$ 中的始对象，其中 $U: cosliceP(CommRingCat, R) -> SetCat$ 取遗忘函子。
     ]
     #proof[
       基本上是多项式环的定义。
@@ -1710,10 +1810,12 @@
     #definition[
       回顾笛卡尔闭范畴的定义，我们将以下构造过程定义为 $GraCat' -> GraCat'$ 的自函子 $F$：
       - 首先，对图 $G$ 添加所有二元直积和指数对象，得到图 $G'$
-        - $G'$ 的顶点集是 $G$ 的顶点集，加上所有的 $A times B, B^A$ 形式的顶点，其中 $A, B$ 是 $G$ 的顶点。这些顶点都是语法的，也就是说，与原图中的顶点完全独立。
+        - $G'$ 的顶点集是 $G$ 的顶点集，加上所有的 $A times B, B^A$ 形式的顶点，其中 $A, B$ 是 $G$ 的顶点。这些顶点都是语法的，也就是说，与原图中的顶点完全独立#footnote[
+          例如，假设 $G$ 本身就是笛卡尔闭范畴，$A, B$ 是其中对象，那么 $G$ 中原本就有直积对象 $A times B$，但这里我们仍然添加一个新对象 $A times B$，在对象意义下与原来的 $A times B$ 并不相等。但读者可以想象，根据我们对态射的定义方式，它们最终是同构的。类似的，我们之后构造的边（态射）也是形式的。
+        ]。
         - $G'$ 的边集是 $G$ 的边集，加上：
           $
-          &pi_1: A times B -> A, pi_2: A times B -> B, forall A, B\ 
+          &pi_1: A times B -> A, pi_2: A times B -> B, forall A, B\
           &inner(f, g): C -> A times B, forall A, B, C, f: C -> A, g: C -> B\
           &epsilon: B^A times B -> A, forall A, B\
           $
@@ -1744,6 +1846,12 @@
       如果我们删去其中商掉等价关系的一步，我们得到的就是一个自由的正直觉主义演算的构造步骤了。这也反映了正文中提及的，逻辑演算与对应范畴之间的关系。
     ]
     #lemma[
+      对于任何图同态 $f$，$F f$ 都是一个“保持笛卡尔闭结构”的图同态
+    ]
+    #proof[
+      由定义显然。
+    ]
+    #lemma[
       $F$ 在对象上是单的（$F X = F Y => X = Y$），进而 $F$ 的像构成范畴 $F GraCat'$
     ]
     #proof[
@@ -1767,7 +1875,7 @@
       $F$ 保持余极限
     ]
     #proof[
-      只需运用如下基本性质：伴随对的左函子保持余极限@ai_jabr
+      只需运用如下基本性质：伴随对的左函子保持余极限（见 @ai_jabr）
     ]
 
     接下来，我们给出一些方便使用的定义和结论，它们保证了我们可以对 $F$ 这个构造过程取极限，并且这个极限具有良好的性质。
@@ -1809,7 +1917,10 @@
     ]
     接下来，我们继续之前的构造过程。假设 $G$ 是一个带有终对象的图，则 $G$ 自然的成为了 $coslice(GraCat', G)$ 的始对象。同时，我们有：
     #proposition[
-      余完备范畴的余切片范畴也是余完备的@stacks-project
+      余完备范畴的余切片范畴也是余完备的
+    ]
+    #proof[
+      详见@stacks-project
     ]
     同时，使用显然的图同态 $alpha: G -> F G$，$F$ 自然的延伸为 $coslice(GraCat', G)$ 上的自函子 $F'$，它将 $f: G -> H$ 映射为 $F' f = F f compose alpha$，将：
     #align(center)[#commutative-diagram(
@@ -1832,7 +1943,7 @@
       $F (cal(C) G) eqv cal(C) G$
     ]
     #theorem[
-      设 $H$ 是 $F$ 的不动点，则 $H$ 是笛卡尔闭范畴 
+      设 $H$ 是 $F$ 的不动点，则 $H$ 是笛卡尔闭范畴
     ]
     #proof[
       考虑 $F$ 的构造过程，所有我们需要的结构都可以从 $F X$ 中找到，将之映回 $X$ 即可。
@@ -1847,13 +1958,14 @@
     $
     其中 $U$ 是遗忘函子。为此，我们还需要进一步的性质。
     #proposition[
-      设 $C$ 是笛卡尔闭范畴，则 $F C$ 与 $C$ 范畴等价 
+      设 $C$ 是笛卡尔闭范畴，则 $F C$ 与 $C$ 范畴等价
     ]<fc-equiv>
     #proof[
       我们取 $eta: F C -> C$ 将所有新构造的结构，包括二元积和指数对象及其相关的态射，映回 $C$ 中对应的结构。不难验证它满足本质满，全忠实的条件，因此是范畴等价@ai_jabr。
     ]
     #remark[
-      通常来说，$F C$ 与 $C$ 并不是同构的，换言之，在图的意义下两者并不一致。这也很好理解，因为构造过程中我们形式地构造了众多冗余的直积对象，指数对象等。它们与原先标准的直积对象，指数对象等虽然在范畴内同构，但并不相等。@fc-equiv 也是我们将终对象独立处理的原因之一。读者可以检查，如果我们仿照其他结构，语法地构造终对象，那么@fc-equiv 就不成立了。
+      通常来说，$F C$ 与 $C$ 并不是同构的，换言之，在图的意义下两者并不一致。这是因为构造过程中，我们形式地构造了众多冗余的直积对象，指数对象等。
+      // 它们与原先标准的直积对象，指数对象等虽然在范畴内同构，但并不相等。@fc-equiv 也是我们将终对象独立处理的原因之一。读者可以检查，如果我们仿照其他结构，语法地构造终对象，那么@fc-equiv 就不成立了。
     ]
     #corollary[
       $cal(C) C$ 与 $C$ 范畴等价
@@ -1891,12 +2003,12 @@
         Hom(cal(C) C(x), D) eqv Hom(C(x), U D)
       $
       按照多项式范畴的定义，对于任何给定的 $F: C -> D$ 和 $y: F A -> F B$，条件：
-      - $H$ 在 $C$ 上保持 $F$ 
-      - $H$ 将 $x$ 映为 $y$ 
+      - $H$ 在 $C$ 上保持 $F$
+      - $H$ 将 $x$ 映为 $y$
       显然唯一确定了上式右侧的一个图同态，因此也唯一确定了上式左侧的一个态射 $cal(C) C(x) -> D$，证毕。
     ]
 
-    
+
 // = 基本功能 <intro>
 
 // == 标题

@@ -213,11 +213,11 @@
   doc,
 ) = {
   set text(weight: "regular", font: 字体.宋体, size: 字号.小四, lang: "zh")
-  
+
   set heading(numbering: chinesenumbering)
   set list(indent: 2em)
   set enum(indent: 2em)
-  
+
   set page("a4",
     margin: (
       top : 2.5cm,
@@ -243,7 +243,7 @@
   show strong: it => text(font: 字体.黑体, weight: "semibold", it.body)
   show emph: it => text(font: 字体.楷体, style: "italic", it.body)
   set par(spacing: linespacing)
-  show raw: set text(font: 字体.代码)
+  // show raw: set text(font: 字体.代码)
 
   show figure: it => [
     #set align(center)
@@ -258,10 +258,10 @@
     } else if it.kind == table {
       it.body
       [
-        #set text(字号.五号) 
+        #set text(字号.五号)
         #it.caption
       ]
-      
+
     } else if it.kind == "code" {
       it.body
       [
@@ -314,7 +314,7 @@
     }
   }
 
-  show heading.where(level: 1): body => {    
+  show heading.where(level: 1): body => {
     pagebreak(weak: true)
     body
   }
@@ -384,7 +384,7 @@
       it
     }
   }
-  
+
   set footnote(numbering: (..nums) => text(size: 10pt, numbering("①", ..nums)))
   set align(start)
 

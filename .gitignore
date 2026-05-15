@@ -2,4 +2,5 @@
 *.pdf
 !/build/thesis.pdf
 .vscode/
+.zed/
 notes-lib
