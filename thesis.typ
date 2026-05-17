@@ -2698,7 +2698,7 @@
 
 
 = 致谢 <thanks>
-
+感谢夏壁灿老师，王迪老师，胡振江老师对这篇文章以及对我之前及今后学习历程的指导。感谢北京大学众多老师在过去的几年内对我的指导和栽培。感谢所有参考文献的作者对知识的贡献，以及 ncatlab， Stack project 对众多相关零散信息的收集和整理。感谢所有数字工具的开发者帮助顺利高效地完成了这篇文章。最后，感谢所有亲朋好友对我的鼓励与支持。
 // 感谢Typst开发者和原PhD论文模板开发者
 
 // DOCUMENT END:标记文章结束，页面计数停止
@@ -2706,4 +2706,4 @@
 
 
 // 原创性与版权声明
-#Statement(2024, 5, 15, teacher_sign : image("./images/老师签名.png"), my_sign: image("./images/本人签名.png")) <claim>
+#Statement(2026, 5, 17, teacher_sign : image("./images/老师签名.png"), my_sign: image("./images/本人签名.png")) <claim>
