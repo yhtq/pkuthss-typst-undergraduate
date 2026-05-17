@@ -1278,8 +1278,8 @@
         为了符号统一，我们将 $tack$ 留给类型断言，而使用 $intacke$ 来表示逻辑推理
       ]，其中 $Delta$ 是一些 $Omega$ 中的项，$p$ 也是 $Omega$ 中的项。
 
-      我们要求一个直觉主义类型系统中有如下推理规则：
-      #TODO
+      // 我们要求一个直觉主义类型系统中有如下推理规则：
+      // #TODO
     ]<def-intu-type-sys-2>
   == Topos
     #let char(x) = $"char"(#x)$
@@ -1323,175 +1323,298 @@
       $
       显然，等化子的泛性质就说明上面的图表是拉回图表。
     ]
+    #let Sub = "Sub"
     #proposition[
-      等价的，子对象分类器可以定义为对象 $Omega$ 使得：
+      等价的，假设 $cat$ 包含所有有限极限，子对象分类器可以定义为对象 $Omega$ 使得有自然同构：
       $
-        "Sub" eqv Hom(-, Omega)
+        Sub eqv Hom(-, Omega)
       $
-    ]
-    #proof[
-      #TODO
-    ]
-    #definition[Topos][
-      称一个范畴 $cat$ 是一个（基本/Elementary）*Topos*，如果它是一个含有子对象分类器和自然数对象的笛卡尔闭范畴。
-    ]
-    #proposition[
-      记 $d : B -> B times B := pair(id, id)$ 是对角态射，则对任何 $f, g : A -> B$ 有：
+      其中 $Sub$ 是指取子对象，具体被定义为：
       $
-        f = g <=> char(d) compose pair(f, g) = top compose circle
+        funcDef(Sub, C^op, SetCat, X, {U inja X} quo ~ )
       $
-    ]<diag-prop>
-    #proof[
-      若 $f = g$ 显有 $char(d) compose pair(f, f) = char(d) compose d compose f = top compose circle compose f = top compose circle$
-
-      对于另一个方向，假设 $pair(f, g) = top compose circle$，则有下面的图表：
+      其中两个单态射 $i, j$ 被视作等价，如果存在同构 $k$ 使得 $i = j compose k$，它在态射上被定义为 $Sub(f) : Sub(B) -> Sub(A)$，将子对象 $i: U inja B$ 通过拉回图表：
       #align(center)[#commutative-diagram(
-      node((0, 0), $B$, 1),
-      node((0, 1), $1$, 2),
-      node((1, 0), $B times B$, 3),
-      node((1, 1), $Omega$, 4),
-      node((1, -1), $B$, 5),
-      arr(1, 2, $circle$),
-      arr(1, 3, $d$),
-      arr(2, 4, $top$),
-      arr(3, 4, $char(d)$),
-      arr(5, 3, $inner(f, g)$),
-      arr(5, 2, $circle$)
-      )]
-      同时，@topos-pullback 给出右半部分是一个拉回图表，继而：
-            #align(center)[#commutative-diagram(
-      node((0, 0), $B$, 1),
-      node((0, 1), $1$, 2),
-      node((1, 0), $B times B$, 3),
-      node((1, 1), $Omega$, 4),
-      node((1, -1), $B$, 5),
-      arr(1, 2, $circle$),
-      arr(1, 3, $d$),
-      arr(2, 4, $top$),
-      arr(3, 4, $char(d)$),
-      arr(5, 3, $inner(f, g)$),
-      arr(5, 2, $circle$),
-      arr(5, 1, $exists! h$,dashed_str)
-      )]
-      这表明：
-      $
-        inner(f, g) = inner(id, id) compose h = inner(h, h)
-      $
-      继而 $f = h = g$，证毕。
-    ]
-    需要指出的是，对于一个 topos $cat$ 来说，我们可以将其视为一个笛卡尔闭范畴构造多项式范畴。然而，$cat[x]$ 并不一定是一个 topos。当然，它无疑仍是一个带自然数对象的笛卡尔闭范畴，我们在@lambda-arithmetic 中建立的理论也仍然都适用。
-  == Topos 的内语言
-    #definition[Topos 的内语言][
-      设 $cat$ 是一个 topos，称 $cat$ 的*内语言*为如下定义的#MBL $scrL(cat)$：
-      - 其类型就是 $cat$ 中的对象，$1, N, * times *, * => *, Omega, P(*)$ 分别就是 $cat$ 中的 $1, N, * times *, *^*, Omega, Omega^*$
-      - 在上下文 $Gamma$ 中，具有 $A$ 类型的项就是 $cat[Gamma]$ 中 $1 -> A$ 的态射。
-      - 具体的，项的构造规则由下表对应给出：
-          #box(width: 50%)[
-            #table(
-              columns: (1fr, 1fr),
-              [$scrL(cat)$], [$cat$],
-              [\*], [$1 -> 1$],
-              [$0$], [$0: 1 -> N$],
-              [$S n$], [$(S : N -> N) compose n$],
-              [$pair(a, b)$], [$pair(a, b) : 1 -> A times B$],
-              [$a ineq a'$], [$char(d_A) compose pair(a, a')$],
-              [$a in alpha$], [$epsilon compose inner(alpha, a) : 1 -> Omega$],
-              [${x: A | phi(x)}$], [
-                $lambda x:A. phi(x)$
-                #footnote[
-                  准确来说，是按照上一章的理论，对应此 $lambda$ 算术项的态射
-                ]
-              ]
-
-            )
-          ]
-
-        其中 $d_A$ 的定义如@diag-prop，$epsilon$ 同上一章。
-    ]
-    读者可能已经看出，尽管这里我们采用的是 $a in alpha, P A$ 这样的集合论符号，其实际语义却是通过 @lambda-arithmetic 中的函数类型来实现的。具体来说，$P A$ 无非就是 $Omega^A$ 或者 $A => Omega$，而 $a in alpha$ 则无非是 $alpha$ 这个函数应用在 $a$ 上。
-    #let cornorlr(body) = $lr(corner #body corner.r)$
-
-    回忆@def-intu-type-sys-2，我们在定义 $Omega$ 内部的推理关系时，记号上总会有些不协调。这里我们终于可以对于 $scrL(cat)$ 做以解释#footnote[这里所有的逻辑公式都是元逻辑中的，不是指 $Omega$ 中的内逻辑]：
-    - $intack(Gamma) p : Omega$ 就是在 $scrL(cat)$ 中，有：
-      $
-        forall C, h: C -> A: f compose h = top compose circle
-      $
-      其中，设 $Gamma = {x_i: A_i}$ 定义 $A = product A_i$，$f$ 是 $p$ 在 $cat[Gamma]$ 中，根据@cor-abs 得到的态射 $A -> Omega$。
-    - $Delta intack(Gamma) p : Omega$ 就是在 $scrL(cat)$ 中，有：
-      $
-        forall C, h: C -> A:\
-        (forall i: f_i compose h = top compose circle) => f compose h = top compose circle
-      $
-      其中 $A, f$ 如之前定义，$f_i$ 是 $Delta$ 中各个项根据@cor-abs 得到的态射 $A -> Omega$。
-    特别的，考察：
-    $
-      p intack(Gamma) q
-    $
-    假设 $p, q$ 分别对应 $f, g : A -> Omega$，上式定义为：
-    $
-      forall C, h: C -> A:\
-      (f compose h = top compose circle) => g compose h = top compose circle
-    $
-    如果选择 $C = ker f$，$h$ 是核态射，这就是说：
-    $
-      (f compose (ker f -> A) = top compose circle) => g compose (ker f -> A) = top compose circle
-    $
-    显然，其前件根据 $ker$ 的定义是成立的，因此后件也成立。这意味着：
-    $
-      g compose (ker f -> A) = top compose circle
-    $
-    或者可以理解为就是：
-    $
-    ker f subset ker g
-    $
-    上面的推理反过来也是成立的。
-    #proposition[
-      $p intack(Gamma) q$ 当且仅当存在唯一 $e : ker f -> ker g$ 使得：
-      $
-        ker f -> A = (ker g -> A) compose e
-      $
+      node((0, 0), $U times_B A$, 1),
+      node((0, 1), $U$, 2),
+      node((1, 0), $A$, 3),
+      node((1, 1), $B$, 4),
+      arr(1, 2, $$,),
+      arr(1, 3, $$,  inj_str),
+      arr(2, 4, $$, inj_str),
+      arr(3, 4, $$),)]
+      得到 $A$ 的子对象 $U times_i A$
     ]
     #proof[
-      - 假设 $p intack(Gamma) q$，之前的推理说明：
+      只证明其中一个方向。假设 $Sub eqv^tau Hom(-, Omega)$，其中 $tau$ 是从左到右的函数。
+      对于任何 $A$ 都有：
+      #align(center)[#commutative-diagram(
+        node((0, 0), $Sub(A)$, 1),
+      node((0, 1), $Hom(A, Omega)$, 2),
+      node((1, 0), $Sub(Omega)$, 3),
+      node((1, 1), $Hom(Omega, Omega)$, 4),
+      arr(1, 2, $tau$, bij_str),
+      arr(3, 1, $Sub(tau(id_A))$),
+      arr(4, 2, $Hom(tau(id_A), Omega))$),
+      arr(3, 4, $tau$, bij_str),)]
+      右下取 $id$ 得
+      $
+        Sub(tau(id_A))(Inv(tau)(id)) = Inv(tau)(tau(id_A)) = id_A
+      $
+      也即：
+      #align(center)[#commutative-diagram(
+      node((0, 0), $A$, 1),
+      node((0, 1), $U$, 2),
+      node((1, 0), $A$, 3),
+      node((1, 1), $Omega$, 4),
+      arr(1, 2, $$),
+      arr(1, 3, $id$),
+      arr(2, 4, $Inv(tau)(id)$),
+      arr(3, 4, $tau(id_A)$),)]
+      是拉回图表。我们记 $top = Inv(tau)(id)$ 可以看出，所有对象到 $U$ 都存在一个态射。
+
+      // 此外，对于任何 $A -> U$ 的态射 $h$，都有：
+      // #align(center)[#commutative-diagram(
+      //   node((0, 0), $Sub(A)$, 1),
+      // node((0, 1), $Hom(A, Omega)$, 2),
+      // node((1, 0), $Sub(U)$, 3),
+      // node((1, 1), $Hom(U, Omega)$, 4),
+      // arr(1, 2, $tau$, bij_str),
+      // arr(3, 1, $Sub(tau(id_A))$),
+      // arr(4, 2, $Hom(tau(id_A), Omega))$),
+      // arr(3, 4, $tau$, bij_str),)]
+      // 然而 $id compose tilde(h) = id => tilde(h) = id$，这表明：
+      // $
+      //   h = A -> U
+      // $
+      // 换言之，我们证明了所有对象到 $U$ 恰有一个态射，进而：
+      // $
+      //   U = 1
+      // $
+      // 因此，可以取 $top := Inv(tau)(id)$
+        // #align(center)[#commutative-diagram(
+        // node((0, 0), $Sub(A)$, 1),
+        // node((0, 1), $Hom(A, Omega)$, 2),
+        // node((1, 0), $Sub(1)$, 3),
+        // node((1, 1), $Hom(1, Omega)$, 4),
+        // arr(1, 2, $tau $, bij_str),
+        // arr(3, 1, $Sub(circle) $),
+        // arr(4, 2, $Hom(circle, Omega)$),
+        // arr(3, 4, $tau$, bij_str),)]
+        // 就有：
+        // $
+        //   Sub(circle) (id) = Sub(circle) (Inv(tau)(top)) = Inv(tau) (Hom(circle, Omega) (top)) = Inv(tau) (top compose circle)\
+        //   top compose circle = tau(Sub(circle)(id))
+        // $
+        // 其中 $Sub(circle) (id)$ 是指：
+        // #align(center)[#commutative-diagram(
+        // node((0, 0), $1 times A$, 1),
+        // node((0, 1), $1$, 2),
+        // node((1, 0), $A$, 3),
+        // node((1, 1), $1$, 4),
+        // arr(1, 2, $$,),
+        // arr(1, 3, $$,  inj_str),
+        // arr(2, 4, $id$, inj_str),
+        // arr(3, 4, $circle$),)]
+        // 根据 $1 times A eqv A$，有 $tau(Sub(circle)(id)) = tau(id)$
+
+        // 而：
+        // #align(center)[#commutative-diagram(
+        // node((0, 0), $Sub(Omega)$, 1),
+        // node((0, 1), $Hom(Omega, Omega)$, 2),
+        // node((1, 0), $Sub(1)$, 3),
+        // node((1, 1), $Hom(1, Omega)$, 4),
+        // arr(1, 2, $tau$, bij_str),
+        // arr(1, 3, $Sub(top)$),
+        // arr(2, 4, $Hom(top, Omega)$),
+        // arr(3, 4, $tau$, bij_str),)]
+        // 左上取 $top$，有：
+        // $
+        //   tau(top) compose top = tau(Sub(top)(top))
+        // $
+        // #align(center)[#commutative-diagram(
+        // node((0, 0), $1 times_omega 1$, 1),
+        // node((0, 1), $1$, 2),
+        // node((1, 0), $1$, 3),
+        // node((1, 1), $Omega$, 4),
+        // arr(1, 2, $$),
+        // arr(1, 3, $$),
+        // arr(2, 4, $top$),
+        // arr(3, 4, $top$),)]
+        // 显然，$Sub(top)(top) = id$，因此：
+        // $
+        //   tau(top) compose top
+        //   = tau(id) = top
+        // $
+        // 另外：
+        // #align(center)[#commutative-diagram(
+        // node((0, 0), $Sub(Omega)$, 1),
+        // node((0, 1), $Hom(Omega, Omega)$, 2),
+        // node((1, 0), $Sub(Omega)$, 3),
+        // node((1, 1), $Hom(Omega, Omega)$, 4),
+        // arr(1, 2, $tau$, bij_str),
+        // arr(1, 3, $Sub(tau(top))$),
+        // arr(2, 4, $Hom(tau(top), Omega)$),
+        // arr(3, 4, $tau$, bij_str),)]
+        // // 左上取 $top$，有：
+        // // $
+        // //   tau(top) compose tau(top) = tau(Sub(tau(top))(top))
+        // // $
+        // // #align(center)[#commutative-diagram(
+        // // node((0, 0), $1?$, 1),
+        // // node((0, 1), $1$, 2),
+        // // node((1, 0), $Omega$, 3),
+        // // node((1, 1), $Omega$, 4),
+        // // arr(1, 2, $$),
+        // // arr(1, 3, $$),
+        // // arr(2, 4, $top$),
+        // // arr(3, 4, $tau(top)$),)]
+        // // 右上取 $id$，就有：
+        // // $
+        // //   Sub(top)(Inv(tau)(id)) = Inv(tau)(top) = id
+        // // $
+        // // 也即：
+        // // #align(center)[#commutative-diagram(
+        // // node((0, 0), $1$, 1),
+        // // node((0, 1), $U$, 2),
+        // // node((1, 0), $1$, 3),
+        // // node((1, 1), $Omega$, 4),
+        // // arr(1, 2, $  $),
+        // // arr(1, 3, $id$, bij_str),
+        // // arr(2, 4, $Inv(tau)(id)$),
+        // // arr(3, 4, $top$),)]
+
+
+        // 此外，任取 $m : B inja A$，令 $h: A -> Omega = tau(m)$，根据自然性：
+        // #align(center)[#commutative-diagram(
+        // node((0, 0), $Sub(A)$, 1),
+        // node((0, 1), $Hom(A, Omega)$, 2),
+        // node((1, 0), $Sub(B)$, 3),
+        // node((1, 1), $Hom(B, Omega)$, 4),
+        // arr(1, 2, $tau$),
+        // arr(1, 3, $Sub(m)$),
+        // arr(2, 4, $Hom(m, Omega)$),
+        // arr(3, 4, $tau$),)]
+        // $
+        //   tau(m) compose m = tau(Sub(m)(m))
+        // $
+        // 容易验证 $Sub(m)(m) = id$，因此：
+        // $
+        //   h compose m = tau(m) compose m = tau(id) = top compose circle
+        // $
+        同时，任取 $h: A -> Omega$，设 $m = Inv(tau)(h)$，有：
+        #align(center)[#commutative-diagram(
+        node((0, 0), $Sub(A)$, 1),
+        node((0, 1), $Hom(A, Omega)$, 2),
+        node((1, 0), $Sub(Omega)$, 3),
+        node((1, 1), $Hom(Omega, Omega)$, 4),
+        arr(1, 2, $tau $, bij_str),
+        arr(3, 1, $Sub(h) $),
+        arr(4, 2, $Hom(h, Omega)$),
+        arr(3, 4, $tau$, bij_str),)]
+        右下角取 $id$，就有：
         $
-          g compose (ker f -> A) = top compose circle
+          m = Inv(tau)(h) = Sub(h) (top)
         $
-        根据 $ker g$ 的泛性质立刻就有：
+        也即有以下拉回图表：
+        #align(center)[#commutative-diagram(
+        node((0, 0), $B = A times_Omega Omega$, 1),
+        node((0, 1), $U$, 2),
+        node((1, 0), $A$, 3),
+        node((1, 1), $Omega$, 4),
+        // node((1, -1), $B$, 5),
+        arr(1, 2, $$,),
+        arr(1, 3, $m$,  inj_str),
+        arr(2, 4, $top$, inj_str),
+        arr(3, 4, $h$),
+        // arr(5, 3, $m$, inj_str),
+        // arr(5, 2, $$),
+        // arr(5, 1, $$, dashed_str),
+        )]
+        对于所有 $A -> U$ 的态射 $f$，取 $h = top compose f$，上面的结论结合下面的拉回图表：
         #align(center)[#commutative-diagram(
         node((0, 0), $A$, 1),
-        node((0, 1), $Omega$, 2),
-        node((1, 0), $ker f$, 3),
-        node((1, 1), $1$, 4),
-        node((0, -1), $ker g$, 5),
-        arr(1, 2, $g$),
-        arr(1, 4, $circle$),
-        arr(4, 2, $top$),
-        arr(3, 1, $$),
-        arr(5, 1, $$),
-        arr(3, 5, $exists! e$, dashed_str)
+        node((0, 1), $U$, 2),
+        node((1, 0), $A$, 3),
+        node((1, 1), $Omega$, 4),
+        // node((1, -1), $B$, 5),
+        arr(1, 2, $f$,),
+        arr(1, 3, $id$),
+        arr(2, 4, $top$, inj_str),
+        arr(3, 4, $top compose f$),
+        // arr(5, 3, $m$, inj_str),
+        // arr(5, 2, $$),
+        // arr(5, 1, $$, dashed_str),
         )]
-      - 反之，若上面位置的 $e$ 存在，则：
+        都给出：
         $
-          g compose (ker f -> A) = g compose (ker g -> A) compose e = top compose circle compose e = top compose circle
+          Inv(tau)(top compose f) = id_A, top compose f = tau(id_A)
         $
-        证毕。
+        这表明对于 $f, f': A -> U$：
+        $
+          top compose f = top compose f' => f = f'
+        $
+        也即 $A -> U$ 的态射有且只有 $f$
+
+        再结合之前的结论，这表明 $U$ 就是终对象 $1$，因此之前的图表变为：
+        #align(center)[#commutative-diagram(
+        node((0, 0), $B = A times_Omega Omega$, 1),
+        node((0, 1), $1$, 2),
+        node((1, 0), $A$, 3),
+        node((1, 1), $Omega$, 4),
+        // node((1, -1), $B$, 5),
+        arr(1, 2, $$,),
+        arr(1, 3, $m$,  inj_str),
+        arr(2, 4, $top$, inj_str),
+        arr(3, 4, $h$),
+        // arr(5, 3, $m$, inj_str),
+        // arr(5, 2, $$),
+        // arr(5, 1, $$, dashed_str),
+        )]
+        // 图上可得：
+        // $
+        //   top compose (Y -> U) = top compose phi
+        // $
+        // 结合 $top$ 是单态射就有 $Y -> U = phi$
+        只要取 $char(m) = tau(m), ker(h, top compose circle) = tau(h)$，所有性质都由上面的拉回图表给出了。
+
+
+        // 合并之前的图表：
+        // #align(center)[#commutative-diagram(
+        // node((0, 0), $B = A times_Omega U$, 1),
+        // node((0, 1), $U$, 2),
+        // node((1, 0), $A$, 3),
+        // node((1, 1), $Omega$, 4),
+        // node((-1, 1), $1$, 5),
+        // arr(1, 2, $$,),
+        // arr(1, 3, $m$,  inj_str),
+        // arr(2, 4, $Inv(tau)(id)$, inj_str),
+        // arr(3, 4, $h$),
+        // arr(1, 5, $circle$),
+        // arr(5, 2, $$)
+        // // arr(5, 3, $m$, inj_str),
+        // // arr(5, 2, $$),
+        // // arr(5, 1, $$, dashed_str),
+        // // )]
+        // 左下取 $top$ 就有：
+        // $
+        //   tau(top) compose h = tau(Sub(h)(top))
+        // $
+        // $
+        //   m = Sub(h)(top)\
+        //   h = tau(Sub(h)(top))
+        // $
+        // #align(center)[#commutative-diagram(
+        // node((0, 0), $A times_Omega 1$, 1),
+        // node((0, 1), $1$, 2),
+        // node((1, 0), $A$, 3),
+        // node((1, 1), $Omega$, 4),
+        // arr(1, 2, $$),
+        // arr(1, 3, $$, inj_str),
+        // arr(2, 4, $top$, inj_str),
+        // arr(3, 4, $h$),)]
+
     ]
-    根据上面的命题，我们立刻得到：
-    #corollary[
-      $p intack(Gamma) q, q intack(Gamma) p$ 当且仅当 $f = g$
-    ]
-    #proof[
-      如果 $f = g$ 则结论是显然的，反过来，上面的命题立刻说明 $ker f = ker g$，回忆@def-subobj-classifier 并注意到 $f, g$ 都是 $ker f -> A$ 的特征态射，由唯一性立刻有 $f = g$
-    ]
-    如果我们用 $p =^Gamma q$ 记 $f = g$，那么上面的结论就可以写成：
-    #centerProofTree(
-      rule(
-        $p intack(Gamma) q$,
-        $q intack(Gamma) p$,
-        $p =^Gamma q$
-      )
-    )
-    毫无疑问，这是非常符合直觉的推理规则。
 #let scrT = $scr(T)$
 == #(MBL)生成的 topos
   前面介绍了 topos 的定义以及 topos 的内语言 #MBL，现在我们可以反过来，给出一个#(MBL)生成的 topos 的构造方法。由于 #(MBL)是#(STLC)的拓展，我们可以根据@cat-func 得到一个笛卡尔闭范畴。不幸的是，这个范畴一般而言并不是一个 topos，可能需要额外的理论将其与一个 topos 连接起来。
