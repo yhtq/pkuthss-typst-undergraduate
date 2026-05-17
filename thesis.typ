@@ -1103,7 +1103,7 @@
     基于以上的拓展（或者其中的一部分），我们也可以得到类似的同构结论。这也说明，我们建立的理论是足够普遍的。
 #let MBL = "Mitchell–Bénabou 语言"
 = Topos 与#MBL
-    在@lambda-calculus 中，我们大体上处理了与逻辑学中的*命题逻辑*对应的部分。很自然的，我们希望仿照这样的方式处理带量词的逻辑系统。在看似与此无关的一侧，Lawvere @38b76542-b771-32c2-a3ea-ba3f392713d3 首先意识到范畴论也可以起到类似集合论的作用，成为其他数学理论的逻辑基础。这个想法迅速的被发展为所谓的 *Grothendieck topos*。在 topos 中，人们也找到了内部的类型理论，它被称为 #MBL#footnote[在原书中它被称为*直觉主义类型系统*，但现代文献中的“直觉主义类型系统”通常是指 Martin-Löf 的依赖类型理论 @Martin-Lof1980-MARITT-18，它是一些现代常用的定理证明器，如 Rocq@Rocq , Lean@Lean 的理论基础。而这里所说的类型系统相较而言更为简化，主要设计目的是与 topos 理论之间建立对应。这里使用的称呼来自于 @mac_lane_sheaves_1994。]。读者将会看到，在 #(MBL) / topos 中，我们可以“复刻”出一个基于集合论的经典形式逻辑系统。
+    在@lambda-calculus 中，我们大体上处理了与逻辑学中的*命题逻辑*对应的部分。很自然的，我们希望仿照这样的方式处理带量词的逻辑系统。在看似与此无关的一侧，Lawvere @38b76542-b771-32c2-a3ea-ba3f392713d3 首先意识到范畴论也可以起到类似集合论的作用，成为其他数学理论的逻辑基础。这个想法迅速的被发展为所谓的 *Grothendieck topos*。在 topos 中，人们也找到了内部的类型理论，它被称为 #MBL#footnote[在原书中它被称为*直觉主义类型系统*，但现代文献中的“直觉主义类型系统”通常是指 Martin-Löf 的依赖类型理论 @Martin-Lof1980-MARITT-18，它是一些现代常用的定理证明器，如 Rocq@Rocq , Lean@Lean 的理论基础。而这里所说的类型系统相较而言更为简化，主要设计目的是与 topos 理论之间建立对应。这里使用的称呼来自于 @mac_lane_sheaves_1994。]。读者将会看到，在 #(MBL) / topos 中，我们可以“复刻”出一个基于经典集合论的形式逻辑系统。
   == #MBL
     #let ineq = $eq.o$
     首先，我们建立所谓*#MBL*。
@@ -1278,8 +1278,7 @@
         为了符号统一，我们将 $tack$ 留给类型断言，而使用 $intacke$ 来表示逻辑推理
       ]，其中 $Delta$ 是一些 $Omega$ 中的项，$p$ 也是 $Omega$ 中的项。
 
-      // 我们要求一个直觉主义类型系统中有如下推理规则：
-      // #TODO
+      我们要求一个#(MBL)中有标准的高阶逻辑推理规则。
     ]<def-intu-type-sys-2>
   == Topos
     #let char(x) = $"char"(#x)$
@@ -1661,7 +1660,7 @@
     $scrT(scrL)$ 中的态射 $f: alpha -> beta$  是单态射当且仅当 $Inv(f) compose f = id$
   ]
   #proof[
-    #TODO
+    与标准集合论的证明相似。
   ]
   根据集合论中 $SetCat$ 范畴的直观，当然也有以下命题：
   #proposition[
@@ -1697,9 +1696,26 @@
       是拉回图表。
     ]
     #proof[
-      #TODO
+      事实上，可以定义：
+      $
+        ker h := {x : A | inner(x, top) in abs(h)},\
+        abs(ker h -> alpha) := {inner(x, x) : A times A | inner(x, top) in abs(h)}
+      $
+      则上图交换是显然的。此外，任取 $f: beta -> alpha$ 使得：
+      $
+        h compose f = T compose circle
+      $
+      就有：
+      $
+        abs(h compose f) = abs(T compose circle) = {inner(y, top): B times 1| y in beta}
+      $
+      只需定义 $g: beta -> ker h$ 使得 $abs(g) = abs(f)$，不难验证它就是唯一所满足拉回图表性质的态射
     ]
-    回到原命题 #TODO
+    我们已经给出了 $ker$ 的定义方法，对于所有单态射 $m$，再定义 $char(m)$ 为：
+    $
+      abs(char(m)) := {inner(x, t): A times Omega | t = (exists y: B, inner(y, x) in abs(m)}
+    $#footnote[接近于标准集合论中，$m$ 的原像]
+    不难验证 $char(m)$ 的核映射就是 $m$ 本身，这就得到了所有的性质。
     ]
     综上，我们就得到了：
     #theorem[
@@ -1815,12 +1831,6 @@
       对于任何 topos $scrT$，总有：
       $
         scrL(xi_(scrT)) = eta_(scrL(scrT))\
-      $
-    ]
-    #proof[
-      我们只证明第二个等式。注意到：
-      $
-        #TODO
       $
     ]
     这个性质也表明，我们不能一般的期待 $scrL, scrT$ 是一对范畴同构。这是因为如果它们构成范畴同构，则根据@xi-isom 和上面的结论，我们会得到 $eta$ 也是一个#(MBL)之间的同构。然而稍加思考就会发现，$eta$ 往往不是一个同构。直观上，$scrL$ 中 $P A$ 类型的闭项全部在 $scrL(scrT(scrL))$ 变成了新的类型，这会导致 $scrL(scrT(scrL))$ 中的类型远多于 $scrL$。
