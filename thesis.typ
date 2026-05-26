@@ -19,31 +19,32 @@
   studentid : "2100012990",
   department : "数学科学学院",
   major : "数据科学与大数据",
-  supervisor_name : "夏壁灿",
+  supervisor_name : "夏壁灿、胡振江",
   year_and_month : "二〇二六年五月"
 ) <title-page>
 
+#image("asset/S011000793_2605252156000.pdf")
 
-// 导师评价
-// CheckSheet参数全部必填
-#CheckSheet(
-  name : "郭子荀",
-  studentid : "2100012990",
-  school : "数学科学学院",
-  major : "数据科学与大数据",
-  supervisor : "夏壁灿",
-  department : "数学科学学院",
-  grade : "",
-  title : "教授",
-  chinese_title : "类型系统的范畴语义",
-  english_title : "The Categorical Semantics of Type Theory",
-  sign_pic : image("asset/pkulogo.svg"),
-  year : 2026,
-  month : 5,
-  day : 15,
-)[
+// // 导师评价
+// // CheckSheet参数全部必填
+// #CheckSheet(
+//   name : "郭子荀",
+//   studentid : "2100012990",
+//   school : "数学科学学院",
+//   major : "数据科学与大数据",
+//   supervisor : "夏壁灿",
+//   department : "数学科学学院",
+//   grade : "",
+//   title : "教授",
+//   chinese_title : "类型系统的范畴语义",
+//   english_title : "The Categorical Semantics of Type Theory",
+//   sign_pic : image("asset/pkulogo.svg"),
+//   year : 2026,
+//   month : 5,
+//   day : 15,
+// )[
 
-] // end of check comment
+// ] // end of check comment
 
 #let where = math.serif([其中])
 
@@ -2705,5 +2706,6 @@
 #doc_end()
 
 
-// 原创性与版权声明
-#Statement(2026, 5, 17, teacher_sign : image("./images/老师签名.png"), my_sign: image("./images/本人签名.png")) <claim>
+// // 原创性与版权声明
+// #Statement(2026, 5, 17, teacher_sign : image("./images/老师签名.png")) <claim>
+#image("asset/扫描_26feadecb54441739fbdeb33fbc89e05.pdf") <claim>

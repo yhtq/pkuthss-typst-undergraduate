@@ -40,7 +40,7 @@
 
     #v(3em)
     #set align(right)
-    论文作者签名： #h(0.5em) #box(height: 3em, baseline: 30%)[#my_sign]
+    论文作者签名： #h(3em) #box(height: 3em, baseline: 30%)[#my_sign]
 
     日期： #year 年 #month 月 #day 日
   ])
@@ -70,7 +70,7 @@
 
     #v(4em)
     #set align(right)
-    论文作者签名： #box(height: 3em, baseline: 30%)[#my_sign] #h(1em) 导师签名：#box(height: 3em, baseline: 30%)[#teacher_sign]
+    论文作者签名： #box(height: 3em, baseline: 30%)[#my_sign] #h(3em) 导师签名：#box(height: 3em, baseline: 30%)[#teacher_sign]
 
     日期： #year 年 #month 月 #day 日
   ])

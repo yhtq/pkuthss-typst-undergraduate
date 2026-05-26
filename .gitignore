@@ -1,6 +1,7 @@
 .DS_Store
 *.pdf
 !/build/thesis.pdf
+!asset/*
 .vscode/
 .zed/
 notes-lib
