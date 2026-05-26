@@ -5,7 +5,7 @@
 
 #show: doc => UndergraduateThesis(
   // ctitle必填
-  ctitle: "类型系统的范畴语义",
+  ctitle: "类型论的范畴语义",
   doc,
 )
 #import "@preview/ctheorems:1.1.3": *
@@ -13,7 +13,7 @@
 // 封面修改后位本科生版本
 // TitlePage参数全部必填
 #TitlePage(
-  chinese_title: [类型系统的范畴语义],
+  chinese_title: [类型论的范畴语义],
   english_title: [The Categorical Semantics of Type Theory],
   name : "郭子荀",
   studentid : "2100012990",
@@ -36,7 +36,7 @@
 //   department : "数学科学学院",
 //   grade : "",
 //   title : "教授",
-//   chinese_title : "类型系统的范畴语义",
+//   chinese_title : "类型论的范畴语义",
 //   english_title : "The Categorical Semantics of Type Theory",
 //   sign_pic : image("asset/pkulogo.svg"),
 //   year : 2026,
